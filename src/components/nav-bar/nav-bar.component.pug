@@ -1,3 +1,17 @@
-nav-bar
-  a
-    != import('asssets/lure-logo.svg')
+div
+  a(href='/')
+    Icon(name='lure-logo')
+
+  nav
+    a(href='/') Home
+    a(href='/how-it-works') How we work
+    a(href='/blog') Blog
+    a(href='/contact') Contact
+
+
+script.
+  import {Icon} from 'components/icon'
+
+  export default {
+    components: {Icon}
+  }

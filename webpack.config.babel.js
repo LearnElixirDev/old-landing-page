@@ -40,6 +40,7 @@ if (IS_PROD) {
 export default {
   entry: './src/main.js',
   mode: IS_PROD ? 'production' : 'development',
+  devtool: 'eval-source-map',
 
   output: {
     path: DIST_PATH,
@@ -48,14 +49,11 @@ export default {
 
   module: {
     rules: [{
-      test: /\.js$/,
-      loader: 'babel-loader',
-      include: SRC_PATH,
-      query: {
-        sourceMap: !IS_PROD,
-        cacheDirectory: true,
-        compact: IS_PROD
-      }
+      test: /\.svg$/,
+      use: [
+        'raw-loader',
+        'svgo-loader'
+      ]
     }, {
       test: /\.s?css/,
       include: SRC_PATH,
@@ -91,7 +89,6 @@ export default {
                   } else {
                     const relativeFilePath = filename.replace(new RegExp('[^\\/]+$'), '')
 
-                    console.log(path.resolve(relativeFilePath, url))
                     return {file: path.resolve(relativeFilePath, url)}
                   }
                 }
@@ -106,6 +103,22 @@ export default {
             })
           }
         }
+      }
+    }, {
+      test: /\.js$/,
+      loader: 'babel-loader',
+      include: SRC_PATH,
+      query: {
+        presets: [
+          ['@babel/preset-env', {modules: false}]
+        ],
+        plugins: [
+          '@babel/plugin-syntax-dynamic-import',
+          ['ramda', {'useES': true}]
+        ],
+        sourceMap: !IS_PROD,
+        cacheDirectory: true,
+        compact: IS_PROD
       }
     }]
   },

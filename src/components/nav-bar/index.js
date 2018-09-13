@@ -1,1 +1,1 @@
-export * from './nav-bar.component.pug'
+export {default as NavBar} from './nav-bar.component.pug'

@@ -1,6 +1,9 @@
 {
-  "presets": ["env", "stage-3"],
+  "presets": [
+    "@babel/preset-env",
+  ],
   "plugins": [
+    "@babel/plugin-syntax-dynamic-import",
     ["ramda", {"useES": true}]
   ]
 }
