@@ -7,6 +7,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import S3Plugin from 'webpack-s3-plugin'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
+import {pugMixins} from './pug-mixins'
 
 import {name as appName} from './package.json'
 
@@ -60,7 +61,7 @@ export default {
       use: [
         ...(IS_PROD ? [MiniCssExtractPlugin.loader, 'css-loader'] : ['style-loader']),
         'postcss-loader',
-        'sass-loader'
+        {loader: 'sass-loader', options: {includePaths: ['./node_modules']}}
       ]
     }, {
       test: /\.pug/,
@@ -70,7 +71,7 @@ export default {
         hotReload: IS_DEV,
         preprocess: {
           markup({content, ...rest}) {
-            return {code: pug.render(content)}
+            return {code: pug.render(`${pugMixins}\n${content}`)}
           },
 
           style({content, attributes, filename}) {

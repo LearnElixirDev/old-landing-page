@@ -1,0 +1,25 @@
+@import '~breakpoint-sass';
+@import '~styles/utility';
+
+$font-size-up-width: 600px;
+$second-font-size-up-width: 745px;
+
+html {
+  font-family: 'Roboto', sans-serif;
+  font-size: $base-font-size - 3px;
+  background-color: $white;
+
+  @include breakpoint($font-size-up-width) {
+    font-size: $base-font-size - 2px;
+  }
+
+  @include breakpoint($second-font-size-up-width) {
+    font-size: $base-font-size;
+  }
+}
+
+h1, h2,
+h3, h4
+h5, h6, strong {
+  font-weight: bold;
+}

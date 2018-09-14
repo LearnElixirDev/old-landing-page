@@ -1,10 +1,13 @@
+import 'styles/global.scss'
+import {MDCRipple} from '@material/ripple'
+
 import {setIconMap} from 'components/icon'
 import {NavBar} from 'components/nav-bar'
 
-setIconMap({
-  'lure-logo': import('assets/lure-logo.svg')
-})
+setIconMap((iconName) => import(`assets/${iconName}.svg`))
 
-const app = new NavBar({
+new NavBar({
   target: document.body
 })
+
+new MDCRipple(document.querySelector('.mdc-button'))

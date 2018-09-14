@@ -48,8 +48,12 @@
     "webpack-s3-plugin": "^1.0.2"
   },
   "dependencies": {
+    "@material/button": "^0.39.3",
+    "@material/ripple": "^0.39.3",
+    "breakpoint-sass": "^2.7.1",
     "ramda": "^0.25.0",
     "sanctuary": "^0.15.0",
-    "svelte": "^2.13.4"
+    "svelte": "^2.13.4",
+    "tachyons-sass": "^4.9.3"
   }
 }
