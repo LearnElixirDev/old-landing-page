@@ -1,0 +1,43 @@
+NavBar
+
+h1 Free Quote
+
+div
+  form
+    .mdc-text-field
+      input.mdc-text-field__input(type='text', id='name' required)
+      label.mdc-floating-label(for='name') Name
+      .mdc-line-ripple
+
+    .mdc-text-field
+      input.mdc-text-field__input(
+        required,
+        type='tel',
+        id='phone-number',
+        pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
+      )
+      label.mdc-floating-label(for='phone-number') Phone Number
+      .mdc-line-ripple
+
+    .mdc-text-field.mdc-text-field--textarea
+      textarea.mdc-text-field__input(id='message' required)
+      label.mdc-floating-label(for='Message') Message
+      .mdc-line-ripple
+
+  div
+    Icon(name='phone-put-together')
+
+FooterBar
+
+script.
+  import {MDCTextField} from '@material/textfield'
+  import {Icon, FooterBar, NavBar} from 'components'
+
+  export default {
+    components: {Icon, FooterBar, NavBar},
+
+    oncreate() {
+      Array.from(document.querySelectorAll('.mdc-text-field'))
+        .forEach((item) => new MDCTextField(item))
+    }
+  }

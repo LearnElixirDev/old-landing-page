@@ -1,0 +1,6 @@
+export {default as Page} from './page.component.pug'
+export * from './blog'
+export * from './contact'
+export * from './home'
+export * from './how-we-work'
+export * from './quote'

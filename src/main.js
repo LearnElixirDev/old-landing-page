@@ -1,13 +1,5 @@
 import 'styles/global.scss'
-import {MDCRipple} from '@material/ripple'
 
-import {setIconMap} from 'components/icon'
-import {NavBar} from 'components/nav-bar'
+import {setIconMap} from 'components'
 
-setIconMap((iconName) => import(`assets/${iconName}.svg`))
-
-new NavBar({
-  target: document.body
-})
-
-new MDCRipple(document.querySelector('.mdc-button'))
+setIconMap((iconName) => import(/* webpackPrefetch: true, webpackChunkName: "[request]" */ `assets/${iconName}.svg`))

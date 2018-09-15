@@ -1,0 +1,22 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title= htmlWebpackPlugin.options.title
+    base(href='/')
+
+    //- - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
+    //-   script.
+    //-     if ('serviceWorker' in navigator)
+    //-       navigator.serviceWorker.register('sw.js')
+
+
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+
+    //- != require('./fonts.pug')
+    //- - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
+    //-   != require('./metadata.pug')
+
+  body
+
+

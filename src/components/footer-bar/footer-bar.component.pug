@@ -1,0 +1,18 @@
+footer.flex.justify-between.items-center.pa3
+  a.db.w4(href='/')
+    Icon(name='lure-logo' class='test')
+
+  small &copy;Lure Consulting Inc 2018
+
+  nav
+    a.mr2.link.gray.hover-moon-gray(href='/blog') Blog
+    a.mr2.link.gray.hover-moon-gray(href='/how-we-work') How we work
+    a.link.gray.hover-moon-gray(href='/quote') Free Quote
+
+
+script.
+  import {Icon} from 'components/icon'
+
+  export default {
+    components: {Icon}
+  }

@@ -1,0 +1,19 @@
+img(src='{imageUrl}', alt='{imageAlt}')
+
+h1 {title}
+small {date}
+
+| {@html content}
+
+script.
+  export default {
+    data() {
+      return {
+        date: new Date(),
+        title: '',
+        content: '',
+        imageUrl: '',
+        imageAlt: ''
+      }
+    }
+  }

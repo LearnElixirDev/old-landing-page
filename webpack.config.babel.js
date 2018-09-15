@@ -20,6 +20,15 @@ const IS_DEV = NODE_ENV === 'development'
 const SRC_PATH = rootPath('src')
 const DIST_PATH = rootPath('dist')
 
+const titleAdd = (name) => ` | ${name}`
+const createHtmlPlugin = (chunkName, fileName, append = '') => new HtmlWebpackPlugin({
+  filename: fileName,
+  template: '!!!pug-loader!./src/index.pug',
+  inject: true,
+  chunks: [chunkName],
+  title: `Lure${append}`
+})
+
 const PLUGINS = []
 
 if (IS_PROD) {
@@ -29,23 +38,34 @@ if (IS_PROD) {
       chunkFilename: '[name]-[chunkhash].css'
     })
   )
-} else if (!IS_TEST) {
+}
+
+if (!IS_TEST) {
   PLUGINS.push(
-    new HtmlWebpackPlugin({
-      inject: true,
-      title: appName
-    })
+    createHtmlPlugin('home', 'index.html'),
+    createHtmlPlugin('blog', 'blog.html', titleAdd('Blog')),
+    createHtmlPlugin('contact', 'contact.html', titleAdd('Contact')),
+    createHtmlPlugin('how-we-work', 'how-we-work.html', titleAdd('How We Work')),
+    createHtmlPlugin('quote', 'quote.html', titleAdd('Quote'))
   )
 }
 
 export default {
-  entry: './src/main.js',
   mode: IS_PROD ? 'production' : 'development',
-  devtool: 'eval-source-map',
+  devtool: IS_PROD ? false : 'eval-source-map',
+
+  entry: {
+    home: './src/pages/home.js',
+    blog: './src/pages/blog.js',
+    contact: './src/pages/contact.js',
+    'how-we-work': './src/pages/how-we-work.js',
+    quote: './src/pages/quote.js',
+  },
 
   output: {
     path: DIST_PATH,
-    filename: IS_PROD ? '[name]-[chunkhash].js' : '[name].js'
+    chunkFilename: IS_PROD ? '[name]-[contenthash].js' : '[name].js',
+    filename: IS_PROD ? '[name]-[contenthash].js' : '[name].js'
   },
 
   module: {
@@ -132,6 +152,16 @@ export default {
   },
 
   optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          name: 'commons',
+          chunks: 'initial',
+          minChunks: 2
+        }
+      }
+    },
+
     minimizer: [
       new UglifyJsPlugin({
         cache: true,
@@ -140,13 +170,12 @@ export default {
         uglifyOptions: {
           mangle: true
         }
-      }),
-      new OptimizeCSSAssetsPlugin({})
+      })
+      // new OptimizeCSSAssetsPlugin({})
     ]
   },
 
   devServer: {
-    historyApiFallback: true,
     progress: true,
     port: 3000,
 
@@ -160,6 +189,15 @@ export default {
     overlay: {
       warnings: false,
       errors: true
+    },
+
+    historyApiFallback: {
+      rewrites: [{
+        from: /^\/.*/,
+        to(context) {
+          return `${context.match[0]}.html`
+        }
+      }]
     }
   }
 }

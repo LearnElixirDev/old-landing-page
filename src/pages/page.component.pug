@@ -1,0 +1,19 @@
+NavBar
+
+main
+  svelte:component(this='{component}')
+
+FooterBar
+
+script.
+  import {NavBar, FooterBar} from 'components'
+
+  export default {
+    components: {NavBar, FooterBar},
+
+    data() {
+      return {
+        component: ''
+      }
+    }
+  }

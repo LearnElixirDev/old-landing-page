@@ -1,0 +1,47 @@
+.mdc-card.flex.flex-column.justify-between
+  .mdc-card__media.mdc-card__media--square(style='background-image: url(https://placeimg.com/200/200);')
+
+  .ph2.pt2.mb-auto
+    h2 {name}
+    h3.normal {title}
+
+    p.mt3 {description}
+
+  .ph2.pv2
+    a.mdc-card__action(href='{linkedInUrl}')
+      Icon(name='linkedin')
+
+style.
+  .mdc-card {
+    height: 365px;
+    width: 215px;
+  }
+
+script.
+  import {MDCRipple} from '@material/ripple'
+
+  import {Icon} from 'components'
+
+  const LINKED_IN_ICON = '.mdc-card__action'
+
+  export default {
+    components: {Icon},
+
+    oncreate() {
+      MDCRipple.attachTo(document.querySelector(LINKED_IN_ICON), {isUnbounded: true})
+    },
+
+    data() {
+      return {
+        name: '',
+        title: '',
+        image: '',
+        description: '',
+        linkedInUrl: ''
+      }
+    },
+
+    //- computed: {
+    //-   imageUrl: ({image}) => import(/* webpackPrefetch: true, webpackChunkName: "[request]" */ `assets/${image}.jpg`)
+    //- }
+  }

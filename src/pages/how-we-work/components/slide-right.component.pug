@@ -1,0 +1,24 @@
+.flex
+  div
+    Icon(name='{icon}')
+
+  div
+    h3 {title}
+
+    p {paragraph}
+
+script.
+  import {Icon} from 'components'
+
+  export default {
+    components: {Icon},
+
+    data() {
+      return {
+        icon: '',
+        title: '',
+        paragraph: ''
+      }
+    }
+  }
+
