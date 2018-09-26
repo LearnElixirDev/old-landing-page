@@ -1,5 +1,3 @@
-NavBar
-
 h1 Free Quote
 
 div
@@ -27,14 +25,12 @@ div
   div
     Icon(name='phone-put-together')
 
-FooterBar
-
 script.
   import {MDCTextField} from '@material/textfield'
-  import {Icon, FooterBar, NavBar} from 'components'
+  import {Icon} from 'components'
 
   export default {
-    components: {Icon, FooterBar, NavBar},
+    components: {Icon},
 
     oncreate() {
       Array.from(document.querySelectorAll('.mdc-text-field'))

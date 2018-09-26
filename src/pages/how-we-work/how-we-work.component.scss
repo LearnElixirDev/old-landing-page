@@ -1,0 +1,13 @@
+@import '~styles/utility';
+
+.slide-left {
+  padding-top: $spacing-extra-large;
+}
+
+.slide-right:not(:first-of-type) {
+  padding-top: $spacing-extra-large;
+}
+
+.slide-right:last-of-type {
+  padding-bottom: $spacing-extra-large;
+}
