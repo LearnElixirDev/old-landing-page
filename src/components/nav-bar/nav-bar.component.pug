@@ -1,4 +1,4 @@
-header.flex.justify-between.items-center.pa3
+header.nav-bar
   a.db.w4(href='/')
     Icon(name='lure-logo' class='test')
 
@@ -8,8 +8,9 @@ header.flex.justify-between.items-center.pa3
     a.mr2.link.gray.hover-moon-gray(href='/blog') Blog
     a.link.gray.hover-moon-gray(href='/contact') Contact
 
-
 script.
+  import './nav-bar.component.scss'
+
   import {Icon} from 'components/icon'
 
   export default {

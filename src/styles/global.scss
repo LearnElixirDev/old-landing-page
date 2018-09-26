@@ -14,7 +14,10 @@
 @import 'generic/fonts';
 
 // Trumps
+@import 'trumps/border-radius';
 @import 'trumps/margin';
+@import 'trumps/flex';
+@import 'trumps/width';
 
 // External Imports
 @import '~@material/button/mdc-button';

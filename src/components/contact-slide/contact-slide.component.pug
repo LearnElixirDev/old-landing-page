@@ -1,0 +1,47 @@
+.relative.vh-100
+  .form-container.pt5
+    h2.navy.lh-solid.f-headline Contact Us
+
+    form.w-34
+      .mdc-text-field
+        input.mdc-text-field__input(type='text', id='full-name' required)
+        label.mdc-floating-label(for='full-name') Name
+        .mdc-line-ripple
+
+      .mdc-text-field.mt3
+        input.mdc-text-field__input(type='tel', id='phone-number', pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}')
+        label.mdc-floating-label(for='phone-number') Phone Number
+        .mdc-line-ripple
+
+      .mdc-text-field.mt3
+        input.mdc-text-field__input(type='text', id='email')
+        label.mdc-floating-label(for='email') Email
+        .mdc-line-ripple
+
+      .mdc-text-field.mdc-text-field--textarea.mt3
+        textarea.mdc-text-field__input(id='message' required)
+        label.mdc-floating-label(for='Message') Message
+        .mdc-line-ripple
+
+      button.mt3.mdc-button.mdc-button--raised(type='submit') Send
+
+  .w-50.absolute.bottom-0.right-0
+    Icon(name='phone-put-together')
+
+style.
+  .form-container {
+    margin-left: 10%; 
+  }
+
+script.
+  import {MDCTextField} from '@material/textfield'
+  import {Icon} from 'components'
+
+  export default {
+    components: {Icon},
+
+    oncreate() {
+      Array.from(document.querySelectorAll('.mdc-text-field'))
+        .forEach((item) => new MDCTextField(item))
+    }
+  }

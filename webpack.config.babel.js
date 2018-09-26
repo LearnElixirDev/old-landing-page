@@ -19,23 +19,31 @@ const IS_TEST = NODE_ENV === 'test'
 const IS_DEV = NODE_ENV === 'development'
 const SRC_PATH = rootPath('src')
 const DIST_PATH = rootPath('dist')
+const SASS_INCLUDES = ['src', 'node_modules']
+const STATIC_ENTRY_CHUNKS = ['home', 'blog', 'contact', 'how-we-work', 'quote']
 
 const titleAdd = (name) => ` | ${name}`
 const createHtmlPlugin = (chunkName, fileName, append = '') => new HtmlWebpackPlugin({
   filename: fileName,
   template: '!!!pug-loader!./src/index.pug',
   inject: true,
-  chunks: [chunkName],
+  excludeChunks: STATIC_ENTRY_CHUNKS.filter(chunk => chunk !== chunkName),
   title: `Lure${append}`
 })
+
+const convertChunkToPath = (chunk, path) => `./src${path ? `/${path}` : ''}/${chunk}.js`
+const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
+  acc[chunk] = convertChunkToPath(chunk, path)
+
+  return acc
+}, {})
 
 const PLUGINS = []
 
 if (IS_PROD) {
   PLUGINS.push(
     new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[name]-[chunkhash].css'
+      filename: '[name]-[contenthash].css'
     })
   )
 }
@@ -53,19 +61,12 @@ if (!IS_TEST) {
 export default {
   mode: IS_PROD ? 'production' : 'development',
   devtool: IS_PROD ? false : 'eval-source-map',
-
-  entry: {
-    home: './src/pages/home.js',
-    blog: './src/pages/blog.js',
-    contact: './src/pages/contact.js',
-    'how-we-work': './src/pages/how-we-work.js',
-    quote: './src/pages/quote.js',
-  },
+  entry: convertToEntryPaths(STATIC_ENTRY_CHUNKS, 'pages'),
 
   output: {
     path: DIST_PATH,
-    chunkFilename: IS_PROD ? '[name]-[contenthash].js' : '[name].js',
-    filename: IS_PROD ? '[name]-[contenthash].js' : '[name].js'
+    chunkFilename: IS_PROD ? '[name].[contenthash].js' : '[name].js',
+    filename: IS_PROD ? '[name].[contenthash].js' : '[name].js'
   },
 
   module: {
@@ -79,9 +80,10 @@ export default {
       test: /\.s?css/,
       include: SRC_PATH,
       use: [
-        ...(IS_PROD ? [MiniCssExtractPlugin.loader, 'css-loader'] : ['style-loader']),
+        (IS_DEV ? 'style-loader' : MiniCssExtractPlugin.loader),
+        {loader: 'css-loader', options: {importLoaders: 2}},
         'postcss-loader',
-        {loader: 'sass-loader', options: {includePaths: ['./node_modules']}}
+        {loader: 'sass-loader', options: {includePaths: SASS_INCLUDES}}
       ]
     }, {
       test: /\.pug/,
@@ -98,7 +100,7 @@ export default {
             return new Promise((resolve, reject) => {
               sass.render({
                 data: content,
-                includePaths: ['src'],
+                includePaths: SASS_INCLUDES,
                 sourceMap: true,
                 outFile: 'x', // this is necessary, but is ignored
                 importer(url, prev) {
@@ -151,11 +153,18 @@ export default {
     modules: [SRC_PATH, rootPath('node_modules')]
   },
 
-  optimization: {
+  optimization: !IS_PROD ? {} : {
     splitChunks: {
       cacheGroups: {
-        commons: {
-          name: 'commons',
+        styles: {
+          name: 'styles',
+          test: /\.s?css$/,
+          chunks: 'all',
+          enforce: true
+        },
+
+        common: {
+          name: 'common',
           chunks: 'initial',
           minChunks: 2
         }
@@ -163,15 +172,15 @@ export default {
     },
 
     minimizer: [
+      new OptimizeCSSAssetsPlugin({}),
       new UglifyJsPlugin({
         cache: true,
         parallel: true,
-        sourceMap: IS_PROD,
+        sourceMap: false,
         uglifyOptions: {
           mangle: true
         }
       })
-      // new OptimizeCSSAssetsPlugin({})
     ]
   },
 

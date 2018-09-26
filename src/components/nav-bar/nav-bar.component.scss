@@ -1,0 +1,14 @@
+@import '~styles/utility';
+
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: $nav-bar-height;
+  width: 100%;
+  position: absolute;
+  padding: {
+    left: $spacing-medium;
+    right: $spacing-medium;
+  }
+}
