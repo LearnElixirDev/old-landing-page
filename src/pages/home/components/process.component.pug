@@ -1,26 +1,31 @@
-.w-100.flex.flex-column.justify-center.items-center
-  h3.navy.lh-solid.f-headline The Lure Process
-  span.blue.lh-copy.f4.fw1.mt2 This is how we build your app and website from scratch!
+section.pv5
+  .w-100.flex.flex-column.justify-center.items-center
+    h3.navy.lh-solid.f-headline The Lure Process
+    span.blue.lh-copy.f-subheadline.fw1.mt2 This is how we build your app and website from scratch!
 
-.vh-75.flex.justify-center.items-center.mt3
-  ul.f3.blue
-    li.fw2.tr Ideation and Research
-    li.fw2.mt4.tr.mr5 Sketching and Wireframing
-    li.fw2.mt4.tr.mr6 User Testing to Design
-    li.fw2.mt4.tr.mr6.w5 Web Development: Front End and Back End
-    li.fw2.mt4.tr.mr5 Data Analytics
-    li.fw2.mt4.tr Scalability
+  .flex.justify-center.items-center.mt5
+    ul.f3.blue
+      li.fw2.tr Ideation and Research
+      li.fw2.mt4.tr.mr5 Sketching and Wireframing
+      li.fw2.mt4.tr.mr6 User Testing to Design
 
-  .w-40
-    Icon(name='process')
+      li.fw2.mt4.tr.mr6
+        span.db Web Development:
+        span.db Front End and Back End
 
-.flex.justify-center.mt4
-  button.mdc-button.mdc-button--raised(type='button')
-    a(href='how-it-works') How Lure Works
+      li.fw2.mt4.tr.mr5 Data Analytics
+      li.fw2.mt4.tr Scalability
+
+    .w-34
+      Icon(name='process')
+
+  .flex.justify-center.mt4
+    MatButton
+      a.white(href='how-we-work') How Lure Works
 
 script.
-  import {Icon} from 'components'
+  import {Icon, MatButton} from 'components'
 
   export default {
-    components: {Icon}
+    components: {Icon, MatButton}
   }

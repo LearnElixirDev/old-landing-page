@@ -1,24 +1,25 @@
-.w-100.flex.flex-column.justify-center.items-center.pv5
-  h3.navy.lh-solid.f-headline.width-copy Services Lure Proivides
-  span.blue.lh-copy.f-subheadline.mt4.w-40.tc Lure provides you with high performing and scalable mobile apps, web apps, desktop apps, and websites! 
+section.mv5
+  .w-100.flex.flex-column.justify-center.items-center
+    h3.navy.lh-title.f-headline.width-copy Services Lure Proivides
+    span.blue.lh-solid.f-subheadline.mt4.w-40.tc.fw1 Lure provides you with high performing and scalable mobile apps, web apps, desktop apps, and websites!
 
-.flex.justify-center.items-center.mt3.pb5
-  .w-40
-    Icon(name='services')
+  .flex.justify-center.items-center.mt5.pb5
+    .w-34
+      Icon(name='services')
 
-  .ml4.self-end
-    ul.f3.blue
-      li.fw2 UX/UI Design and Research
-      li.fw2.mt5 Web, Mobile and Desktop Development
-      li.fw2.mt5 Backend Servers/DevOps Software
-      li.fw2.mt5 Prototyping, Scaling and More...
+    .ml4.self-end
+      ul.f3.navy.mb5.fw5
+        li UX/UI Design and Research
+        li.mt5 Web, Mobile and Desktop Development
+        li.mt5 Backend Servers/DevOps Software
+        li.mt5 Prototyping, Scaling and More...
 
-    button.mt5.mdc-button.mdc-button--raised(type='button')
-      a(href='quote') Get a Free Quote
+      MatButton
+        a.white(href='quote') Get a Free Quote
 
 script.
-  import {Icon} from 'components'
+  import {Icon, MatButton} from 'components'
 
   export default {
-    components: {Icon}
+    components: {Icon, MatButton}
   }

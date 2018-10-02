@@ -1,0 +1,5 @@
+@import '~styles/utility';
+
+.mdc-button.mdc-button--rounded {
+  border-radius: $shaped-button-border-radius;
+}

@@ -1,0 +1,49 @@
+h2.navy.lh-solid.f-headline {title}
+
+form.mt3
+  MatTextField(
+    label='Full Name',
+    name='name',
+    autocomplete='name',
+    required=true,
+    className='w-75'
+  )
+
+  MatTextField(
+    type='tel',
+    label='Phone Number',
+    name='phone',
+    autocomplete='tel',
+    pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}',
+    className='w-75 mt3'
+  )
+
+  MatTextField(
+    label='Email',
+    autocomplete='email',
+    className='w-75 mt3'
+  )
+
+  .mdc-text-field.mdc-text-field--textarea.mv3
+    textarea.mdc-text-field__input(
+      id='message',
+      required
+    )
+    label.mdc-floating-label(for='Message') Message
+    .mdc-line-ripple
+
+  MatButton(type='submit')
+    span Send
+
+script.
+  import {MatTextField, MatButton} from 'components'
+
+  export default {
+    components: {MatTextField, MatButton},
+
+    data() {
+      return {
+        title: 'Contact Us'
+      }
+    }
+  }

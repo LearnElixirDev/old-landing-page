@@ -1,6 +1,6 @@
-.pv5
+section.pv5
   .flex.justify-center.items-center
-    .w-40
+    .w-34
       Icon(name='computer-analysis')
 
     .ml4
@@ -9,13 +9,13 @@
       p.blue.lh-copy.f3.width-copy.fw1 Grow your business by viewing your customers’ trends!
 
   .flex.justify-center.mt4
-    button.mdc-button.mdc-button--raised(type='button')
-      a(href='/quote') Get Free Quote
+    MatButton
+      a.white(href='/quote') Get Free Quote
 
 script.
-  import {Icon} from 'components'
+  import {Icon, MatButton} from 'components'
 
   export default {
-    components: {Icon}
+    components: {Icon, MatButton}
   }
 

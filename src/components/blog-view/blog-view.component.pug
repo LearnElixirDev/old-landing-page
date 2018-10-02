@@ -1,0 +1,31 @@
+.blog-view
+  div.tc
+    img.h4.w-100(src='{imageUrl}', alt='{imageAlt}')
+
+    h1.navy.f-headline.lh-solid.mv3 {title}
+    small.blue {humanizedDate} - By {author}
+
+  .width-copy.mt5.flex.justify-content.center {@html content}
+
+style.
+  .blog-view {
+    min-height: 100vh;
+  }
+
+script.
+  export default {
+    data() {
+      return {
+        date: new Date(),
+        author: '',
+        title: '',
+        content: '',
+        imageUrl: '',
+        imageAlt: ''
+      }
+    },
+
+    computed: {
+      humanizedDate: ({date}) => date.toLocaleString()
+    }
+  }

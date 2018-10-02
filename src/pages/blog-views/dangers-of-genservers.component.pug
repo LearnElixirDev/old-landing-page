@@ -1,0 +1,19 @@
+BlogView(
+  title='Dangers of GenServers in Elixir',
+  author='Mika Kalathil',
+  content='{content}',
+  imageAlt='Dangers of GenServer Chart'
+)
+
+script.
+  import {BlogView} from 'components'
+
+  export default {
+    components: {BlogView},
+
+    data() {
+      return {
+        content: 'some content'
+      }
+    }
+  }

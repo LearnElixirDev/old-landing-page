@@ -1,26 +1,30 @@
 Hero
 Process
+AlreadyStartedApplication
 Implementation
 Building
 AdvancedGrowth
 Team
 Services
-ContactSlide
+ContactIconForm
 
 script.
-  import {ContactSlide} from 'components'
+  import {ContactIconForm} from 'components'
 
   import {
     Services, Contact,
+    AlreadyStartedApplication,
     Hero, Process, Implementation,
     AdvancedGrowth, Building, Team
   } from './components'
 
   export default {
     components: {
+      Services,
       Hero, Process,
       Building, Team,
-      Services, ContactSlide,
+      ContactIconForm,
+      AlreadyStartedApplication,
       Implementation, AdvancedGrowth
     }
   }

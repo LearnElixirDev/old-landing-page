@@ -1,0 +1,21 @@
+.flex.justify-center.items-center.pv5
+  .w-33
+    ContactForm(title='{title}')
+
+  .ml5.w-30(class='{iconClass}')
+    Icon(name='{iconName}')
+
+script.
+  import {Icon, ContactForm} from 'components'
+
+  export default {
+    components: {Icon, ContactForm},
+
+    data() {
+      return {
+        iconClass: '',
+        iconName: 'contact',
+        title: 'Contact Us'
+      }
+    }
+  }

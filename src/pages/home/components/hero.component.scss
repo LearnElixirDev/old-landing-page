@@ -1,0 +1,5 @@
+@import '~styles/utility';
+
+section {
+  height: calc(100vh - #{$nav-bar-height})
+}

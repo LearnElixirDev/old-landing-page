@@ -1,7 +1,7 @@
 import path from 'path'
 import pug from 'pug'
 import sass from 'node-sass'
-import {optimize} from 'webpack'
+import {optimize, HashedModuleIdsPlugin} from 'webpack'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import S3Plugin from 'webpack-s3-plugin'
@@ -21,15 +21,19 @@ const SRC_PATH = rootPath('src')
 const DIST_PATH = rootPath('dist')
 const SASS_INCLUDES = ['src', 'node_modules']
 const STATIC_ENTRY_CHUNKS = ['home', 'blog', 'contact', 'how-we-work', 'quote']
+const BLOG_VIEW_CHUNKS = ['dangers-of-genservers']
 
 const titleAdd = (name) => ` | ${name}`
 const createHtmlPlugin = (chunkName, fileName, append = '') => new HtmlWebpackPlugin({
   filename: fileName,
   template: '!!!pug-loader!./src/index.pug',
   inject: true,
-  excludeChunks: STATIC_ENTRY_CHUNKS.filter(chunk => chunk !== chunkName),
-  title: `Lure${append}`
+  title: `Lure${append}`,
+  excludeChunks: BLOG_VIEW_CHUNKS
+    .concat(STATIC_ENTRY_CHUNKS)
+    .filter(chunk => chunk !== chunkName),
 })
+
 
 const convertChunkToPath = (chunk, path) => `./src${path ? `/${path}` : ''}/${chunk}.js`
 const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
@@ -42,6 +46,7 @@ const PLUGINS = []
 
 if (IS_PROD) {
   PLUGINS.push(
+    new HashedModuleIdsPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name]-[contenthash].css'
     })
@@ -51,17 +56,27 @@ if (IS_PROD) {
 if (!IS_TEST) {
   PLUGINS.push(
     createHtmlPlugin('home', 'index.html'),
-    createHtmlPlugin('blog', 'blog.html', titleAdd('Blog')),
     createHtmlPlugin('contact', 'contact.html', titleAdd('Contact')),
     createHtmlPlugin('how-we-work', 'how-we-work.html', titleAdd('How We Work')),
-    createHtmlPlugin('quote', 'quote.html', titleAdd('Quote'))
+    createHtmlPlugin('quote', 'quote.html', titleAdd('Quote')),
+    createHtmlPlugin('blog', 'blog.html', titleAdd('Blog')),
+    createHtmlPlugin(
+      'dangers-of-genservers',
+      'blog/elixir/dangers-of-genservers.html',
+      titleAdd('Blog - Dangers of GenServers')
+    )
   )
 }
+
+const ENTRY = Object.assign(
+  convertToEntryPaths(STATIC_ENTRY_CHUNKS, 'pages'),
+  convertToEntryPaths(BLOG_VIEW_CHUNKS, 'pages/blog-views')
+)
 
 export default {
   mode: IS_PROD ? 'production' : 'development',
   devtool: IS_PROD ? false : 'eval-source-map',
-  entry: convertToEntryPaths(STATIC_ENTRY_CHUNKS, 'pages'),
+  entry: Object.assign(ENTRY, {polyfill: './src/polyfill.js'}),
 
   output: {
     path: DIST_PATH,
@@ -93,7 +108,11 @@ export default {
         hotReload: IS_DEV,
         preprocess: {
           markup({content, ...rest}) {
-            return {code: pug.render(`${pugMixins}\n${content}`)}
+            return {
+              code: pug.render(`${pugMixins}\n${content}`, {
+                doctype: 'html'
+              })
+            }
           },
 
           style({content, attributes, filename}) {
@@ -154,6 +173,7 @@ export default {
   },
 
   optimization: !IS_PROD ? {} : {
+    runtimeChunk: 'single',
     splitChunks: {
       cacheGroups: {
         styles: {
@@ -161,6 +181,12 @@ export default {
           test: /\.s?css$/,
           chunks: 'all',
           enforce: true
+        },
+
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
         },
 
         common: {

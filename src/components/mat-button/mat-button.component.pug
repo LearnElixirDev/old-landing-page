@@ -1,0 +1,39 @@
+button(
+  ref:button,
+  type='{type}',
+  class='{buttonClasses}'
+)
+  slot
+
+script.
+  import './mat-button.component.scss'
+
+  import {addRipple} from 'helpers/material'
+
+  export default {
+    data() {
+      return {
+        type: 'button',
+        nonRounded: false,
+        buttonType: 'raised'
+      }
+    },
+
+    computed: {
+      buttonClasses: ({buttonType, nonRounded}) => {
+        let classes = 'mdc-button'
+
+        if (buttonType)
+          classes += ` mdc-button--${buttonType}`
+
+        if (!nonRounded)
+          classes += ' mdc-button--rounded'
+
+        return classes
+      }
+    },
+
+    oncreate() {
+      addRipple(this.refs.button)
+    }
+  }
