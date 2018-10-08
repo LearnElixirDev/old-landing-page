@@ -1,6 +1,7 @@
-h2.navy.lh-solid.f-headline {title}
++if('title')
+  h2.navy.lh-solid.f-headline {title}
 
-form.mt3
+form.mt4
   MatTextField(
     label='Full Name',
     name='name',
@@ -24,22 +25,22 @@ form.mt3
     className='w-75 mt3'
   )
 
-  .mdc-text-field.mdc-text-field--textarea.mv3
-    textarea.mdc-text-field__input(
-      id='message',
-      required
-    )
-    label.mdc-floating-label(for='Message') Message
-    .mdc-line-ripple
+  MatTextarea(
+    label='Message',
+    rows='3',
+    cols='40',
+    className='mt3 w-100',
+    required=true
+  )
 
-  MatButton(type='submit')
+  MatButton(type='submit', className='mt3')
     span Send
 
 script.
-  import {MatTextField, MatButton} from 'components'
+  import {MatTextField, MatTextarea, MatButton} from 'components'
 
   export default {
-    components: {MatTextField, MatButton},
+    components: {MatTextField, MatTextarea, MatButton},
 
     data() {
       return {

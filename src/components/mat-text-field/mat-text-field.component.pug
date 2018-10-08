@@ -5,7 +5,8 @@ div(ref:container, class='{containerClass}')
     name='{fieldName}',
     autocomplete='{autocomplete}',
     pattern='{pattern}',
-    required='{required}'
+    required='{required}',
+    tabindex='{tabIndex}'
   )
   label.mdc-floating-label(
     for='{fieldId}'
@@ -15,21 +16,18 @@ div(ref:container, class='{containerClass}')
     .mdc-line-ripple
 
     +else
-      .mdc-notched-outline(ref:notchOutline)
+      .mdc-notched-outline
         svg
           path.mdc-notched-outline__path
 
       .mdc-notched-outline__idle
 
-
 script.
   import {MDCTextField} from '@material/textfield'
-  import {MDCNotchedOutline} from '@material/notched-outline'
 
-  import {
-    createContainerClass,
-    labelToFieldId, labelToFieldName
-  } from './mat-text-field.helpers'
+  import {labelToFieldId, labelToFieldName} from 'helpers/material'
+
+  import {createContainerClass} from './mat-text-field.helpers'
 
   export default {
     data() {
@@ -40,9 +38,10 @@ script.
         shouldRemoveOutline: false,
         name: '',
         isFullWidth: false,
+        tabIndex: false,
         className: '',
-        autocomplete: '',
-        pattern: ''
+        autocomplete: false,
+        pattern: false
       }
     },
 
@@ -55,8 +54,5 @@ script.
 
     oncreate() {
       new MDCTextField(this.refs.container)
-
-      if (!this.shouldRemoveOutline)
-        new MDCNotchedOutline(this.refs.notchOutline)
     }
   }

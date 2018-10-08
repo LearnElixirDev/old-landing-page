@@ -2,14 +2,34 @@
   div.tc
     img.h4.w-100(src='{imageUrl}', alt='{imageAlt}')
 
-    h1.navy.f-headline.lh-solid.mv3 {title}
-    small.blue {humanizedDate} - By {author}
+    h1.f-headline.navy.f-headline.lh-solid.mv3 {title}
+    small.f6.blue {humanizedDate} - By {author}
 
-  .width-copy.mt5.flex.justify-content.center {@html content}
+  article.pb5.mt5.center.markdown-body {@html content}
 
 style.
   .blog-view {
     min-height: 100vh;
+  }
+
+  .markdown-body {
+    width: 650px;
+  }
+
+  .markdown-body :global(li) {
+    list-style-type: disc;
+  }
+
+  .markdown-body :global(pre) {
+    background-color: #2d2d2d;
+  }
+
+  .markdown-body > :global(h1) {
+    border-bottom: 0;
+  }
+
+  .markdown-body :global(em) {
+    font-style: italic;
   }
 
 script.

@@ -1,15 +1,18 @@
-.flex.justify-center.w-100.h6.pv5
-  TeamMember(name='Mika Kalathil', title='CTEO', description='Mika is one of the founders of Lure. He also writes our blog and elegant code!', image='mika')
-  TeamMember(name='Jerry Graham', title='Director Strategic Partnerships', description='Lorem Ipsum', image='mika')
-  TeamMember(name='Michael Lenizky', title='UI/UX Designer', description='Lorem Ipsum', image='mika')
-  TeamMember(name='Pilar Guinea Gil', title='UI/UX Designer', description='Lorem Ipsum', image='mika')
-  TeamMember(name='Philip Klippenstein', title='Software Engineer', description='Lorem Ipsum', image='mika')
+section.flex.flex-column.items-center.w-100.mt5.vh-75
+  h1.navy.f-headline Lure's Team
+
+  .flex.items-center.mt5
+    TeamMember(name='Mika Kalathil', title='CTEO', description='Mika is one of the founders of Lure. He also writes our blog and elegant code!', image='mika')
+    TeamMember(name='Jerry Graham', title='Director Strategic Partnerships', description='Lorem Ipsum', image='mika')
+    TeamMember(name='Michael Lenizky', title='UI/UX Designer', description='Lorem Ipsum', image='mika')
+    TeamMember(name='Pilar Guinea Gil', title='UI/UX Designer', description='Lorem Ipsum', image='mika')
+    TeamMember(name='Philip Klippenstein', title='Software Engineer', description='Lorem Ipsum', image='mika')
 
 script.
   import './team.component.scss'
 
   import TeamMember from './team-member.component.pug'
 
-  export default { 
+  export default {
     components: {TeamMember}
   }

@@ -1,8 +1,8 @@
-.relative.vh-100
+.relative.vh-75
   .form-container.pt5.w-34
-    ContactForm
+    ContactForm(title='{title}')
 
-  .w-50.absolute.bottom-0.right-0
+  .w-40.absolute.bottom-0.right-0
     Icon(name='phone-put-together')
 
 style.
@@ -14,5 +14,11 @@ script.
   import {Icon, ContactForm} from 'components'
 
   export default {
-    components: {Icon, ContactForm}
+    components: {Icon, ContactForm},
+
+    data() {
+      return {
+        title: ''
+      }
+    }
   }

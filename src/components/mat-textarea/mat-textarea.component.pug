@@ -1,0 +1,51 @@
+div(ref:container, class='{addClasses}')
+  textarea.mdc-text-field__input(
+    id='{fieldId}',
+    name='{fieldName}',
+    required='{required}',
+    rows='{rows}',
+    cols='{cols}',
+    tabindex='{tabIndex}'
+  )
+  label.mdc-floating-label(for='{fieldId}') Message
+  .mdc-notched-outline
+    svg
+      path.mdc-notched-outline__path
+
+  .mdc-notched-outline__idle
+
+script.
+  import './mat-textarea.component.scss'
+
+  import {MDCTextField} from '@material/textfield'
+
+  import {labelToFieldId, labelToFieldName} from 'helpers/material'
+
+  const DEFAULT_CLASSES = 'mdc-text-field mdc-text-field--outlined'
+
+  const appendClassesToDefault = (classes) =>
+    classes ? `${DEFAULT_CLASSES} ${classes}` : DEFAULT_CLASSES
+
+  export default {
+    data() {
+      return {
+        rows: 10,
+        cols: 50,
+        label: '',
+        tabIndex: false,
+        required: false,
+        name: '',
+        className: ''
+      }
+    },
+
+    computed: {
+      fieldId: ({label}) => labelToFieldId(label),
+      fieldName: ({name, label}) => name || labelToFieldName(label),
+      addClasses: ({className}) => appendClassesToDefault(className)
+    },
+
+    oncreate() {
+      new MDCTextField(this.refs.container)
+    }
+  }

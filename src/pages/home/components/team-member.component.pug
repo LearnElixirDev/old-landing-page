@@ -1,16 +1,20 @@
 .br-20.team-member.mdc-card.flex.flex-column.justify-between
-  .mdc-card__media.mdc-card__media--square(style='background-image: url(https://placeimg.com/200/200);')
+  +await('imageUrl')
+    +then('backgroundImageUrl')
+      .mdc-card__media.mdc-card__media--square(
+        style='background-image: url({backgroundImageUrl});'
+      )
 
-  .ph2.pt2.mb-auto
-    h2 {name}
-    h3.normal {title}
+      .ph2.pt2.mb-auto
+        h2 {name}
+        h3.normal {title}
 
-    p.mt3 {description}
+        p.mt3 {description}
 
-  .ph3.pv2
-    a.mdc-card__action(href='{linkedInUrl}')
-      .w1
-        Icon(name='linkedin')
+      .ph3.pv2
+        a.mdc-card__action(ref:linkedinIcon, href='{linkedInUrl}')
+          .w1
+            Icon(name='linkedin')
 
 style.
   .mdc-card {
@@ -19,30 +23,41 @@ style.
   }
 
 script.
+  import {pipe, split, head, toLower} from 'ramda'
   import {MDCRipple} from '@material/ripple'
 
   import {Icon} from 'components'
 
-  const LINKED_IN_ICON = '.mdc-card__action'
+  const getLoweredFirstName = pipe(split(' '), head, toLower)
 
   export default {
     components: {Icon},
-
-    oncreate() {
-      MDCRipple.attachTo(document.querySelector(LINKED_IN_ICON), {isUnbounded: true})
-    },
 
     data() {
       return {
         name: '',
         title: '',
-        image: '',
         description: '',
-        linkedInUrl: ''
+        linkedInUrl: '',
+        _started: false
       }
     },
 
-    //- computed: {
-    //-   imageUrl: ({image}) => import(/* webpackPrefetch: true, webpackChunkName: "[request]" */ `assets/${image}.jpg`)
-    //- }
+    onupdate(a) {
+      console.log(a)
+
+      if (!this._started && this.refs.linkedinIcon) {
+        MDCRipple.attachTo(this.refs.linkedinIcon, {isUnbounded: true})
+
+        this._started = true
+      }
+    },
+
+    computed: {
+      imageUrl: ({name}) => import(
+        /*webpackChunkName: "[request]" */ 
+        `assets/team-members-${getLoweredFirstName(name)}.jpg`
+      )
+        .then(({default: imageUrl}) => imageUrl)
+    }
   }

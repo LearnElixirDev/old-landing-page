@@ -1,9 +1,11 @@
-BlogView(
-  title='Dangers of GenServers in Elixir',
-  author='Mika Kalathil',
-  content='{content}',
-  imageAlt='Dangers of GenServer Chart'
-)
++await('content')
+  +then('blogContent')
+    BlogView(
+      title='Dangers of GenServers in Elixir',
+      author='Mika Kalathil',
+      content='{blogContent}',
+      imageAlt='Dangers of GenServer Chart'
+    )
 
 script.
   import {BlogView} from 'components'
@@ -13,7 +15,8 @@ script.
 
     data() {
       return {
-        content: 'some content'
+        content: import('./dangers-of-genservers.md')
+          .then(({default: view}) => view)
       }
     }
   }

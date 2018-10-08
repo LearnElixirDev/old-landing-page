@@ -1,0 +1,3 @@
+.h-page {
+  min-height: calc(100vh - #{$nav-bar-height} - #{$footer-height});
+}

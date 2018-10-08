@@ -1,6 +1,6 @@
 import {attachToPage} from './attach-to-page'
 import {setupPage} from './setup-page'
-import HowWeWork from './how-we-work/how-we-work.component.pug'
+import Process from './process/process.component.pug'
 
 setupPage()
-attachToPage(HowWeWork)
+attachToPage(Process)

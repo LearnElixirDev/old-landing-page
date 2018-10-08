@@ -1,10 +1,10 @@
-section.flex.justify-center.ph3
+section.flex.justify-center.ph3.hero-section
   .w-40.flex.flex-column.justify-center
-    h1.navy.lh-title.f-headline Lure, helping you build the best Websites, Mobile, Web and Desktop Applications.
+    h1.fw9.navy.lh-title.f-headline Lure, helping you build the best Websites, Mobile, Web and Desktop Applications.
     h3.w-75.blue.lh-solid.f-subheadline.mt4.fw1 Level-Up with high performing and scaleable applications with Lure’s Strategy, Design, and Development!
 
     .mt4
-      MatButton
+      MatButton(on:click='scrollToProcess()')
         span Learn More
 
   .w-40.pr5.flex.items-center.ml4
@@ -16,6 +16,15 @@ script.
   import {Icon, MatButton} from 'components'
 
   export default {
-    components: {Icon, MatButton}
+    components: {Icon, MatButton},
+
+    methods: {
+      scrollToProcess() {
+        const processEle = document.getElementById('process-home')
+
+        if (processEle)
+          processEle.scrollIntoView({behavior: 'smooth'})
+      }
+    }
   }
 

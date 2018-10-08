@@ -1,19 +1,20 @@
 h1.navy.f-headline.tc.mt3 Lure's Blog
 
-.flex.justify-center.mv4
-  .flex.flex-column.justify-between.mdc-card.mdc-card__primary-action(tabindex='0')
-    .mdc-card__media.mdc-card__media--16-9(style='background-image: url(https://placeimg.com/200/300);')
-    div.ph2
-      small September 19th 2018
-      h2.lh-copy.mt1 The Dangers of GenServers in Elixir
-      h3.normal.mt1 by <a href='https://mikakalthil.ca'>Mika Kalathil</a>
+.flex.justify-center.mt4
+  a(href='/blog/elixir/dangers-of-genservers')
+    .flex.flex-column.justify-between.mdc-card.mdc-card__primary-action(tabindex='0')
+      .mdc-card__media.mdc-card__media--16-9(style='background-image: url(https://placeimg.com/200/300);')
+      div.ph2.navy
+        small September 19th 2018
+        h2.lh-copy.mt1 The Dangers of GenServers in Elixir
+        h3.normal.mt1 by <a href='https://mikakalthil.ca'>Mika Kalathil</a>
 
-    p.ph2.lh-copy Read and explore the potential dangers of using GenServers in Elixir. Let's take a deep dive into GenServers and discrover their limitations and strengths.
+      p.navy.ph2.lh-copy Read and explore the potential dangers of using GenServers in Elixir. Let's take a deep dive into GenServers and discrover their limitations and strengths.
 
-    .mdc-card__actions
-      .mdc-card__action-buttons
-        MatButton(buttonType='text', nonRounded=true)
-          a(href='/blog/elixir/dangers-of-genservers') Read
+      .mdc-card__actions
+        .mdc-card__action-buttons
+          MatButton(buttonType='text', nonRounded=true)
+            span Read
 
 style.
   .mdc-card {

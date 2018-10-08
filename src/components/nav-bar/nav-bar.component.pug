@@ -1,18 +1,61 @@
-header.nav-bar
-  a.db.w4(href='/')
-    Icon(name='lure-logo' class='test')
+svelte:window(on:scroll='onScroll()')
 
-  nav
-    a.mr4.link.gray.hover-moon-gray(href='/') Home
-    a.mr4.link.gray.hover-moon-gray(href='/how-we-work') How we work
-    a.mr4.link.gray.hover-moon-gray(href='/blog') Blog
-    a.link.gray.hover-moon-gray(href='/contact') Contact
+header.mdc-top-app-bar.mdc-elevation-transition(ref:header)
+  .mdc-top-app-bar__row
+    .mdc-top-app-bar__section.justify-between
+      a.db.w4(href='/')
+        Icon(name='lure-logo' class='test')
+
+      nav
+        a.mr4.link.gray.hover-moon-gray(href='/') Home
+        a.mr4.link.gray.hover-moon-gray(href='/process') Process
+        a.mr4.link.gray.hover-moon-gray(href='/blog') Blog
+        a.link.gray.hover-moon-gray(href='/contact') Contact
 
 script.
   import './nav-bar.component.scss'
 
+  import {MDCTopAppBar} from '@material/top-app-bar'
+
   import {Icon} from 'components/icon'
+  import {debounceTime} from 'helpers/util'
+  import {setClass, removeClass} from 'helpers/dom'
+
+  const SHADOW_CLASS = 'mdc-elevation--z6'
+  const addShadow = setClass(SHADOW_CLASS)
+  const removeShadow = removeClass(SHADOW_CLASS)
+
+  let elementHeight = 64,
+      pastTop = false
+
+  const setHeaderShadow = debounceTime(100, (element) => {
+    if (!element)
+      return
+    else if (!elementHeight)
+      elementHeight = element.getBoundingClientRect().height
+
+    const newPastTop = window.scrollY > elementHeight
+
+    if (newPastTop === pastTop)
+      return
+    else if (newPastTop)
+      addShadow(element)
+    else
+      removeShadow(element)
+
+    pastTop = newPastTop
+  })
 
   export default {
-    components: {Icon}
+    components: {Icon},
+
+    oncreate() {
+      MDCTopAppBar.attachTo(this.refs.header)
+    },
+
+    methods: {
+      onScroll() {
+        setHeaderShadow(this.refs.header)
+      }
+    }
   }

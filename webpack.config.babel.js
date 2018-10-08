@@ -8,6 +8,7 @@ import S3Plugin from 'webpack-s3-plugin'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
 import {pugMixins} from './pug-mixins'
+import Prism from 'node-prismjs'
 
 import {name as appName} from './package.json'
 
@@ -20,20 +21,24 @@ const IS_DEV = NODE_ENV === 'development'
 const SRC_PATH = rootPath('src')
 const DIST_PATH = rootPath('dist')
 const SASS_INCLUDES = ['src', 'node_modules']
-const STATIC_ENTRY_CHUNKS = ['home', 'blog', 'contact', 'how-we-work', 'quote']
+const STATIC_ENTRY_CHUNKS = ['home', 'blog', 'contact', 'process', 'quote']
 const BLOG_VIEW_CHUNKS = ['dangers-of-genservers']
 
 const titleAdd = (name) => ` | ${name}`
-const createHtmlPlugin = (chunkName, fileName, append = '') => new HtmlWebpackPlugin({
-  filename: fileName,
-  template: '!!!pug-loader!./src/index.pug',
+const createHtmlPlugin = (
+  chunkName, filename,
+  append = '', template = '!!!pug-loader!./src/index.pug',
+  extras = {}
+) => new HtmlWebpackPlugin({
+  ...extras,
+  filename,
+  template,
   inject: true,
   title: `Lure${append}`,
   excludeChunks: BLOG_VIEW_CHUNKS
     .concat(STATIC_ENTRY_CHUNKS)
     .filter(chunk => chunk !== chunkName),
 })
-
 
 const convertChunkToPath = (chunk, path) => `./src${path ? `/${path}` : ''}/${chunk}.js`
 const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
@@ -57,7 +62,7 @@ if (!IS_TEST) {
   PLUGINS.push(
     createHtmlPlugin('home', 'index.html'),
     createHtmlPlugin('contact', 'contact.html', titleAdd('Contact')),
-    createHtmlPlugin('how-we-work', 'how-we-work.html', titleAdd('How We Work')),
+    createHtmlPlugin('process', 'process.html', titleAdd('Process')),
     createHtmlPlugin('quote', 'quote.html', titleAdd('Quote')),
     createHtmlPlugin('blog', 'blog.html', titleAdd('Blog')),
     createHtmlPlugin(
@@ -86,6 +91,9 @@ export default {
 
   module: {
     rules: [{
+      test: /\.(png|jpg|jpeg)$/,
+      loader: 'file-loader'
+    }, {
       test: /\.svg$/,
       use: [
         'raw-loader',
@@ -101,6 +109,21 @@ export default {
         {loader: 'sass-loader', options: {includePaths: SASS_INCLUDES}}
       ]
     }, {
+      test: /\.md$/,
+      include: SRC_PATH,
+      use: ['html-loader', {
+        loader: 'markdown-loader',
+        options: {
+          smartypants: true,
+          highlight(code, lang) {
+            const language = Prism.languages[lang] || Prism.languages.autoit
+
+            console.log(code, lang, language)
+            return Prism.highlight(code, language)
+          }
+        }
+      }]
+    }, {
       test: /\.pug/,
       include: SRC_PATH,
       loader: 'svelte-loader',
@@ -110,6 +133,8 @@ export default {
           markup({content, ...rest}) {
             return {
               code: pug.render(`${pugMixins}\n${content}`, {
+                basedir: './src',
+                filename: 'x',
                 doctype: 'html'
               })
             }

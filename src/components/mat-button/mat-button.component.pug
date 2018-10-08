@@ -1,5 +1,6 @@
 button(
   ref:button,
+  on:click,
   type='{type}',
   class='{buttonClasses}'
 )
@@ -15,12 +16,13 @@ script.
       return {
         type: 'button',
         nonRounded: false,
-        buttonType: 'raised'
+        buttonType: 'raised',
+        className: ''
       }
     },
 
     computed: {
-      buttonClasses: ({buttonType, nonRounded}) => {
+      buttonClasses: ({buttonType, nonRounded, className}) => {
         let classes = 'mdc-button'
 
         if (buttonType)
@@ -28,6 +30,9 @@ script.
 
         if (!nonRounded)
           classes += ' mdc-button--rounded'
+
+        if (className)
+          classes += ` ${className}`
 
         return classes
       }
