@@ -1,12 +1,11 @@
 div(ref:container, class='{containerClass}')
   input.mdc-text-field__input(
+    ref:input,
+    on:change,
+    {type},
+    {readonly},
     id='{fieldId}',
-    type='{type}',
     name='{fieldName}',
-    autocomplete='{autocomplete}',
-    pattern='{pattern}',
-    required='{required}',
-    tabindex='{tabIndex}'
   )
   label.mdc-floating-label(
     for='{fieldId}'
@@ -26,8 +25,16 @@ script.
   import {MDCTextField} from '@material/textfield'
 
   import {labelToFieldId, labelToFieldName} from 'helpers/material'
+  import {setAttribute} from 'helpers/dom'
 
   import {createContainerClass} from './mat-text-field.helpers'
+
+  const setAttributeIfHas = (component, element, attributeName) => {
+    const attributeValue = component.get()[attributeName]
+
+    if (attributeValue)
+      setAttribute(attributeName, attributeValue, element)
+  }
 
   export default {
     data() {
@@ -41,7 +48,8 @@ script.
         tabIndex: false,
         className: '',
         autocomplete: false,
-        pattern: false
+        pattern: false,
+        readonly: false
       }
     },
 
@@ -53,6 +61,13 @@ script.
     },
 
     oncreate() {
-      new MDCTextField(this.refs.container)
+      const {container, input} = this.refs
+
+      MDCTextField.attachTo(container)
+
+      setAttributeIfHas(this, input, 'autocomplete')
+      setAttributeIfHas(this, input, 'pattern')
+      setAttributeIfHas(this, input, 'required')
+      setAttributeIfHas(this, input, 'tabindex')
     }
   }

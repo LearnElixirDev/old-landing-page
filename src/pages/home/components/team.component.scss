@@ -1,5 +1,14 @@
-@import '~styles/utility';
+@import '~breakpoint-sass';
 
-.team-member:not(:first-of-type) {
-  margin-left: $spacing-medium;
+$width-all-team-members-fit: 1150px;
+
+.tns-carousel {
+  margin: 0 auto;
+  padding-bottom: 5px;
+}
+
+@include breakpoint(1150px) {
+  .tns-inner #last-entry.tns-item {
+    padding-right: 0;
+  }
 }

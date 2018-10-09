@@ -1,6 +1,6 @@
 svelte:window(on:scroll='onScroll()')
 
-header.mdc-top-app-bar.mdc-elevation-transition(ref:header)
+header.mdc-top-app-bar.mdc-elevation-transition(ref:header, class:mdc-elevation--z6='isPastTop')
   .mdc-top-app-bar__row
     .mdc-top-app-bar__section.justify-between
       a.db.w4(href='/')
@@ -25,30 +25,14 @@ script.
   import {Icon} from 'components/icon'
   import {MatButton} from 'components/mat-button'
   import {debounceTime} from 'helpers/util'
-  import {setClass, removeClass} from 'helpers/dom'
-
-  const SHADOW_CLASS = 'mdc-elevation--z6'
-  const addShadow = setClass(SHADOW_CLASS)
-  const removeShadow = removeClass(SHADOW_CLASS)
 
   let elementHeight = 64
 
-  const setHeaderShadow = debounceTime(100, (element, getPastTop, setPastTop) => {
-    if (!element)
-      return
-    else if (!elementHeight)
-      elementHeight = element.getBoundingClientRect().height
-
+  const setPastTop = debounceTime(100, (getPastTop, setPastTop) => {
     const newPastTop = window.scrollY > elementHeight
 
-    if (newPastTop === getPastTop())
-      return
-    else if (newPastTop)
-      addShadow(element)
-    else
-      removeShadow(element)
-
-    setPastTop(newPastTop)
+    if (getPastTop() !== newPastTop)
+      setPastTop(newPastTop)
   })
 
   export default {
@@ -66,8 +50,7 @@ script.
 
     methods: {
       onScroll() {
-        setHeaderShadow(
-          this.refs.header,
+        setPastTop(
           () => this.get().isPastTop,
           (isPastTop) => this.set({isPastTop})
         )

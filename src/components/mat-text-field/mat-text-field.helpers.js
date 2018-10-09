@@ -14,3 +14,16 @@ export const createContainerClass = (classAdditions, isFullWidth, shouldRemoveOu
   return `${classList} ${classAdditions || ''}`
 }
 
+export const createInputField = (fieldId, type, fieldName, autocomplete, pattern, required, tabIndex) => {
+  return `
+    <input class='mdc-text-field__input'
+           id='{fieldId}'
+           type='type'
+           name='{fieldName}'
+           ${autocomplete ? `autocomplete='${autocomplete}'` : ''}
+           ${pattern ? `pattern='${pattern}'` : ''}
+           ${required ? `required='${required}'` : ''}
+           ${tabIndex ? `tabIndex='${tabIndex}'` : ''}
+    >
+  `
+}

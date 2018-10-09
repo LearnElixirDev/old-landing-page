@@ -1,7 +1,8 @@
 button(
   ref:button,
   on:click,
-  type='{type}',
+  {type},
+  {disabled},
   class='{buttonClasses}'
 )
   slot
@@ -16,6 +17,7 @@ script.
       return {
         type: 'button',
         nonRounded: false,
+        disabled: false,
         buttonType: 'raised',
         className: ''
       }

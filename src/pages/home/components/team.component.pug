@@ -1,18 +1,43 @@
 section.flex.flex-column.items-center.w-100.mt5.vh-75
   h1.navy.f-headline Lure's Team
 
-  .flex.items-center.mt5
-    TeamMember(name='Mika Kalathil', title='CTEO', description='Mika is one of the founders of Lure. He also writes our blog and elegant code!', image='mika')
-    TeamMember(name='Jerry Graham', title='Director Strategic Partnerships', description='Lorem Ipsum', image='mika')
-    TeamMember(name='Michael Lenizky', title='UI/UX Designer', description='Lorem Ipsum', image='mika')
-    TeamMember(name='Pilar Guinea Gil', title='UI/UX Designer', description='Lorem Ipsum', image='mika')
-    TeamMember(name='Philip Klippenstein', title='Software Engineer', description='Lorem Ipsum', image='mika')
+  .mt5.w-100
+    div(ref:container)
+      div
+        TeamMember(name='Mika Kalathil', title='CTEO', description='Mika is one of the founders of Lure. He also writes our blog and elegant code!', image='mika')
+      div
+        TeamMember(name='Jerry Graham', title='Director Strategic Partnerships', description='Lorem Ipsum', image='mika')
+      div
+        TeamMember(name='Michael Lenizky', title='UI/UX Designer', description='Lorem Ipsum', image='mika')
+      div
+        TeamMember(name='Pilar Guinea Gil', title='UI/UX Designer', description='Lorem Ipsum', image='mika')
+      #last-entry
+        TeamMember(name='Philip Klippenstein', title='Software Engineer', description='Lorem Ipsum', image='mika')
 
 script.
   import './team.component.scss'
+  import {tns} from 'tiny-slider/src/tiny-slider'
 
   import TeamMember from './team-member.component.pug'
 
   export default {
-    components: {TeamMember}
+    components: {TeamMember},
+
+    oncreate() {
+      setTimeout(() => {
+        var slider = tns({
+          container: this.refs.container,
+          items: Math.floor(window.innerWidth / 250) || 1,
+          mouseDrag: true,
+          swipeAngle: true,
+          fixedWidth: 215,
+          gutter: 15,
+          loop: false,
+          nav: false,
+          edgePadding: 32,
+          slideBy: 1,
+          speed: 400
+        })
+      }, 200)
+    }
   }

@@ -1,13 +1,18 @@
 +if('title')
   h2.navy.lh-solid.f-headline.tc.tl-ns {title}
 
-form.mt4
+form.mt4(on:submit='onSubmit(event)')
+  +if('errorMessage')
+    span.red.f3 {errorMessage}
+
   MatTextField(
     label='Full Name',
     name='name',
     autocomplete='name',
     required=true,
-    className='w-75'
+    className='w-75',
+    readonly='{isEmailSent}',
+    on:change=`setUserInfo('name', event)`
   )
 
   MatTextField(
@@ -15,14 +20,18 @@ form.mt4
     label='Phone Number',
     name='phone',
     autocomplete='tel',
-    pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}',
-    className='w-75 mt3'
+    pattern='{telPattern}',
+    className='w-75 mt3',
+    readonly='{isEmailSent}',
+    on:change=`setUserInfo('phoneNumber', event)`
   )
 
   MatTextField(
     label='Email',
     autocomplete='email',
-    className='w-75 mt3'
+    className='w-75 mt3',
+    readonly='{isEmailSent}',
+    on:change=`setUserInfo('email', event)`
   )
 
   MatTextarea(
@@ -30,22 +39,92 @@ form.mt4
     rows='3',
     cols='40',
     className='mt3 w-100',
-    required=true
+    required=true,
+    readonly='{isEmailSent}',
+    on:change=`setUserInfo('message', event)`
   )
 
   .mt4.tc.tl-ns
-    MatButton(type='submit', className='w-75 w-auto-ns')
-      span Send
+    MatButton(
+      type='submit',
+      className='w-75 w-auto-ns',
+      disabled='{shouldDisableButton}'
+    )
+      span {sendButtonText}
 
 script.
+  import {tap} from 'ramda'
+
   import {MatTextField, MatTextarea, MatButton} from 'components'
+  import {sendEmail} from 'helpers/aws'
+
+  const ERRORS = {
+    NO_CONTACT_METHOD: () => 'Must suply either a phone number or email',
+    SERVER_ERROR: (error) => 'Server Error: ${error}'
+  }
 
   export default {
     components: {MatTextField, MatTextarea, MatButton},
 
     data() {
       return {
-        title: 'Contact Us'
+        errorMessage: false,
+        isSendingEmail: false,
+        isEmailSent: false,
+        title: 'Contact Us',
+        telPattern: '([0-9]| |-){10,14}',
+        messageInfo: {
+          name: '',
+          email: '',
+          message: '',
+          phoneNumber: ''
+        }
+      }
+    },
+
+    computed: {
+      shouldDisableButton: ({isSendingEmail, isEmailSent}) => isSendingEmail || isEmailSent,
+      sendButtonText: ({isSendingEmail, isEmailSent}) => {
+        if (isSendingEmail)
+          return 'Sending'
+        else if (isEmailSent)
+          return 'Sent'
+        else
+          return 'Send'
+      }
+    },
+
+    methods: {
+      setUserInfo(prop, {target}) {
+        this.set({
+          messageInfo: {
+            ...this.get().messageInfo,
+            [prop]: target.value
+          }
+        })
+      },
+
+      onSubmit(event) {
+        event.preventDefault()
+
+        const setErrorMessage = (errorMessage) => this.set({errorMessage})
+        const {messageInfo: {email, phoneNumber, name, message}} = this.get()
+
+        if (!email && !phoneNumber) {
+          setErrorMessage(ERRORS.NO_CONTACT_METHOD())
+        } else {
+          const onError = tap((...args) => (console.log('error', ...args), this.set({isSendingEmail: false})))
+          const onSuccess = () => (console.log('success'), this.set({
+            isSendingEmail: false,
+            isEmailSent: true
+          }))
+
+          this.set({isSendingEmail: true, errorMessage: ''})
+
+          sendEmail(name, email, phoneNumber, message)
+            .then(onSuccess, onError)
+            .catch((err) => setErrorMessage(ERRORS.SERVER_ERROR(err)))
+        }
       }
     }
   }

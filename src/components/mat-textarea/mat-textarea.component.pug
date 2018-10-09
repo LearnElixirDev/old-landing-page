@@ -1,11 +1,13 @@
 div(ref:container, class='{addClasses}')
   textarea.mdc-text-field__input(
+    on:change,
     id='{fieldId}',
     name='{fieldName}',
     required='{required}',
     rows='{rows}',
     cols='{cols}',
-    tabindex='{tabIndex}'
+    tabindex='{tabIndex}',
+    {readonly}
   )
   label.mdc-floating-label(for='{fieldId}') Message
   .mdc-notched-outline
@@ -32,6 +34,7 @@ script.
         rows: 10,
         cols: 50,
         label: '',
+        readonly: false,
         tabIndex: false,
         required: false,
         name: '',
