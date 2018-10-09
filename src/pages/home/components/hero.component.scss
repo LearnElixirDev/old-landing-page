@@ -1,5 +1,6 @@
+@import '~breakpoint-sass';
 @import '~styles/utility';
 
 section.hero-section {
-  height: calc(100vh - #{$nav-bar-height})
+  height: calc(100vh - #{$nav-bar-height});
 }

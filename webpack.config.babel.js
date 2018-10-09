@@ -118,7 +118,6 @@ export default {
           highlight(code, lang) {
             const language = Prism.languages[lang] || Prism.languages.autoit
 
-            console.log(code, lang, language)
             return Prism.highlight(code, language)
           }
         }

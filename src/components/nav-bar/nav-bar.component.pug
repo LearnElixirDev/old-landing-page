@@ -10,7 +10,12 @@ header.mdc-top-app-bar.mdc-elevation-transition(ref:header)
         a.mr4.link.gray.hover-moon-gray(href='/') Home
         a.mr4.link.gray.hover-moon-gray(href='/process') Process
         a.mr4.link.gray.hover-moon-gray(href='/blog') Blog
-        a.link.gray.hover-moon-gray(href='/contact') Contact
+        +if('isPastTop')
+          MatButton
+            a.white(href='/contact') Contact
+
+          +else
+            a.link.gray.hover-moon-gray(href='/contact') Contact
 
 script.
   import './nav-bar.component.scss'
@@ -18,6 +23,7 @@ script.
   import {MDCTopAppBar} from '@material/top-app-bar'
 
   import {Icon} from 'components/icon'
+  import {MatButton} from 'components/mat-button'
   import {debounceTime} from 'helpers/util'
   import {setClass, removeClass} from 'helpers/dom'
 
@@ -25,10 +31,9 @@ script.
   const addShadow = setClass(SHADOW_CLASS)
   const removeShadow = removeClass(SHADOW_CLASS)
 
-  let elementHeight = 64,
-      pastTop = false
+  let elementHeight = 64
 
-  const setHeaderShadow = debounceTime(100, (element) => {
+  const setHeaderShadow = debounceTime(100, (element, getPastTop, setPastTop) => {
     if (!element)
       return
     else if (!elementHeight)
@@ -36,18 +41,24 @@ script.
 
     const newPastTop = window.scrollY > elementHeight
 
-    if (newPastTop === pastTop)
+    if (newPastTop === getPastTop())
       return
     else if (newPastTop)
       addShadow(element)
     else
       removeShadow(element)
 
-    pastTop = newPastTop
+    setPastTop(newPastTop)
   })
 
   export default {
-    components: {Icon},
+    components: {MatButton, Icon},
+
+    data() {
+      return {
+        isPastTop: false
+      }
+    },
 
     oncreate() {
       MDCTopAppBar.attachTo(this.refs.header)
@@ -55,7 +66,11 @@ script.
 
     methods: {
       onScroll() {
-        setHeaderShadow(this.refs.header)
+        setHeaderShadow(
+          this.refs.header,
+          () => this.get().isPastTop,
+          (isPastTop) => this.set({isPastTop})
+        )
       }
     }
   }

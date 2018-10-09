@@ -44,8 +44,6 @@ script.
     },
 
     onupdate(a) {
-      console.log(a)
-
       if (!this._started && this.refs.linkedinIcon) {
         MDCRipple.attachTo(this.refs.linkedinIcon, {isUnbounded: true})
 

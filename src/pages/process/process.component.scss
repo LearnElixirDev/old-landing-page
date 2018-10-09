@@ -1,4 +1,15 @@
+@import '~breakpoint-sass';
+@import '~styles/utility';
+
 .slide-right,
 .slide-left {
-  height: 85vh;
+  min-height: 75vh;
+
+  @include breakpoint($gt-sm) {
+    height: 85vh;
+  }
+}
+
+.slide-left, .slide-right:not(:first-of-type) {
+  margin-top: $spacing-extra-large;
 }

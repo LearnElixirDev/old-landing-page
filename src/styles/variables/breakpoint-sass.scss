@@ -1,0 +1,18 @@
+$lt-sm: max-width 674px;
+$lt-md: max-width 959px;
+$lt-lg: max-width 1299px;
+$lt-xl: max-width 1919px;
+
+$gt-xs: 675px;
+$gt-sm: 960px;
+$gt-md: 1300px;
+$gt-lg: 1920px;
+
+$xs: max-width ($gt-xs - 1px);
+$sm: $gt-xs ($gt-sm - 1px);
+$md: $gt-sm ($gt-md - 1px);
+$lg: $gt-md ($gt-lg - 1px);
+
+$breakpoint-not-small: 'screen and (min-width: #{$gt-xs})';
+$breakpoint-medium: 'screen and (min-width: #{$gt-sm}) and (max-width: #{$gt-md - 1px})';
+$breakpoint-large: 'screen and (min-width: #{$gt-lg})';

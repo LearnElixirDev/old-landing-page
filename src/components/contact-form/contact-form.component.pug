@@ -1,5 +1,5 @@
 +if('title')
-  h2.navy.lh-solid.f-headline {title}
+  h2.navy.lh-solid.f-headline.tc.tl-ns {title}
 
 form.mt4
   MatTextField(
@@ -33,8 +33,9 @@ form.mt4
     required=true
   )
 
-  MatButton(type='submit', className='mt3')
-    span Send
+  .mt4.tc.tl-ns
+    MatButton(type='submit', className='w-75 w-auto-ns')
+      span Send
 
 script.
   import {MatTextField, MatTextarea, MatButton} from 'components'
