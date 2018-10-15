@@ -105,7 +105,7 @@ if (IS_PROD) {
 
       cloudfrontInvalidateOptions: {
         DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-        Items: ['/index.html', '/runtime*', '/sw.js']
+        Items: ['/*']
       }
     }),
     // new PurgecssPlugin({paths: glob.sync('./src/**/*')}),
@@ -219,16 +219,16 @@ export default {
           disable: !IS_PROD,
 
           webp: {
-            quality: 90
+            quality: 100
           },
 
           mozjpeg: {
             progressive: true,
-            quality: 90
+            quality: 100
           },
 
           pngquant: {
-            quality: '75-90',
+            quality: '90-95',
             speed: 4
           }
         }

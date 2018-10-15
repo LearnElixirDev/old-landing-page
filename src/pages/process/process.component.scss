@@ -5,8 +5,9 @@
 .slide-left {
   min-height: 75vh;
 
-  @include breakpoint($gt-sm) {
-    height: 60vh;
+  @include breakpoint($gt-lg) {
+    min-height: 60vh;
+    max-height: 800px;
   }
 }
 

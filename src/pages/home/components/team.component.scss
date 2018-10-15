@@ -1,4 +1,5 @@
 @import '~breakpoint-sass';
+@import '~styles/utility';
 
 $width-all-team-members-fit: 1150px;
 
@@ -24,16 +25,6 @@ $width-all-team-members-fit: 1150px;
 }
 
 .tns-controls {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: 10;
-
   &:active, &:focus {
     outline: none;
   }
@@ -43,17 +34,24 @@ $width-all-team-members-fit: 1150px;
   }
 
   button {
+    position: absolute;
     height: 100%;
-    width: 10%;
     border: 0;
+    z-index: 10;
+    width: 50px;
+    max-width: 50px;
 
-    &:active, &:focus {
-      outline: none;
+    @include breakpoint($gt-xs) {
+      width: 8%;
     }
+  }
 
-    &:disabled {
-      display: none;
-    }
+  button:active, button:focus {
+    outline: none;
+  }
+
+  button:disabled {
+    display: none;
   }
 
   button svg {
@@ -63,9 +61,15 @@ $width-all-team-members-fit: 1150px;
 
   [data-controls='next'] {
     background: linear-gradient(to right, transparent, white);
+    right: 0;
+    top: 0;
+    bottom: 0;
   }
 
   [data-controls='prev'] {
     background: linear-gradient(to left, transparent, white);
+    left: 0;
+    top: 0;
+    bottom: 0;
   }
 }
