@@ -4,6 +4,5 @@
   ],
   "plugins": [
     "@babel/plugin-syntax-dynamic-import",
-    ["ramda", {"useES": true}]
   ]
 }

@@ -7,6 +7,12 @@ $width-all-team-members-fit: 1150px;
   padding-bottom: 5px;
 }
 
+.tns-item {
+  &:focus, &:active {
+    outline: none;
+  }
+}
+
 @include breakpoint(1150px) {
   .tns-inner #last-entry.tns-item {
     padding-right: 0;

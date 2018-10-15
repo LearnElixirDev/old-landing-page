@@ -1,45 +1,33 @@
-//- - const description = 'Lure consulting blah blah blaah'
+- const description = 'Lure consulting blah blah blaah'
 
-//- meta(property='og:title' content='Not another agency')
-//- meta(property='og:site_name' content='Lure Consulting')
-//- meta(property='og:image' content='')
-//- meta(property='og:description' content=description)
-//- meta(property='og:url' content='https://lure.is')
-//- meta(name='description' content=description)
-//- meta(name='keywords' content='agency,consulting,web-development,development,engineering,web-design,design,ui/ux')
+meta(property='og:title' content='Not another agency')
+meta(property='og:site_name' content='Lure Consulting')
+meta(property='og:image' content='https://lure.is/assets/lure-icon.svg')
+meta(property='og:description' content=description)
+meta(property='og:url' content='https://lure.is')
+meta(name='description' content=description)
+meta(name='keywords' content='agency,consulting,web-development,development,engineering,web-design,design,ui/ux,functional programming,fp')
 
-//
-  link(rel='apple-touch-icon' sizes='180x180' href=require('assets/apple-touch-icon.png'))
-  link(rel='mask-icon' href=require('assets/safari-pinned-tab.svg') color='#5bbad5')
-  link(rel='icon' type='image/png' sizes='32x32' href=require('assets/favicon-32x32.png'))
-  link(rel='icon' type='image/png' sizes='16x16' href=require('assets/favicon-16x16.png'))
-  link(rel='icon' type='image/x-icon' href=require('assets/favicon.ico'))
+link(rel='apple-touch-icon', sizes='180x180', href='assets/favicon/apple-touch-icon.png')
+link(rel='icon', type='image/png', sizes='32x32', href='assets/favicon/favicon-32x32.png')
+link(rel='icon', type='image/png', sizes='16x16', href='assets/favicon/favicon-16x16.png')
+link(rel='mask-icon', href='assets/favicon/safari-pinned-tab.svg', color='#5bbad5')
+link(rel='shortcut icon', href='assets/favicon/favicon.ico')
+meta(name='msapplication-TileColor', content='#2b5797')
+meta(name='msapplication-config', content='assets/favicon/browserconfig.xml')
 
-//
-  script(type='application/ld+json').
-    {
-      "@context": "http://schema.org",
-      "@type": "Company",
-      "description": "Pilar Guinea Gil is a Guatemalan artist using the mediums of photography, sculpture, and lithography to investigate notions of displacement, home, ancestral collective memories, silence and colonization. Through her experience as an immigrant she investigates the silenced history of Guatemala from a distance by reincarnating Guatemalan cultural traditions in a foreign land",
-      "url": "https://pilarguineagil.com",
-      "name": "Pilar Guinea Gil",
-      "birthDate": "1990-09-30",
-      "gender": "Female",
-      "nationality": "Guatemalan",
-      "birthPlace": {
-        "@type": "Country",
-        "name": "Guatemala"
-      },
-      "homeLocation": {
-        "@type": "City",
-        "name": "Vancouver, B.C."
-      }
-    }
 
-   <!--[if (lt IE 9)]><script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.8.7/min/tiny-slider.helper.ie8.js"></script><![endif]-->
+//- script(type='application/ld+json').
+//-   {
+//-     "@context": "http://schema.org",
+//-     "@type": "Company",
+//-     "description": "Lure consulting blah blah blaah",
+//-     "url": "https://lure.is",
+//-     "name": "Lure Consulting",
+//-     "location": {
+//-       "@type": "City",
+//-       "name": "Vancouver, B.C."
+//-     }
+//-   }
 
-// script(async, src=require('!!file-loader?name=[name].[hash:20].[ext]!assets/js/analytics.js'), integrity='sha256-Rfpcnm/tS/kq41rsXWUWSvY2XLlXu/6qgclteq0YbFo=', crossOrigin='anonymous')
-//- script.
-//-   window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-//-   ga('create', 'UA-48617207-7', 'auto');
-//-   ga('send', 'pageview');
+<!--[if (lt IE 9)]><script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.8.7/min/tiny-slider.helper.ie8.js"></script><![endif]-->

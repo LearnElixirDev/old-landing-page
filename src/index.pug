@@ -5,17 +5,25 @@ html(lang='en')
     title= htmlWebpackPlugin.options.title
     base(href='/')
 
-    //- - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
-    //-   script.
-    //-     if ('serviceWorker' in navigator)
-    //-       navigator.serviceWorker.register('sw.js')
+    - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
+      script.
+        if ('serviceWorker' in navigator)
+          navigator.serviceWorker.register('sw.js')
 
 
     meta(name='viewport' content='width=device-width, initial-scale=1')
 
-    //- != require('./fonts.pug')
-    //- - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
-    //-   != require('./metadata.pug')
+    - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
+      != require('!!apply-loader!pug-loader!./metadata.pug')
+
+      // Google Analytics
+      script(async src='https://www.googletagmanager.com/gtag/js?id=UA-127515836-1')
+      script.
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-127515836-1');
 
   body
 

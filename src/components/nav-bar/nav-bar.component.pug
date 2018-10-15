@@ -82,7 +82,12 @@ script.
       onWindowResize() {
         setIsMobile(
           () => this.get().isMobile,
-          (isMobile) => this.set({isMobile})
+          (isMobile) => {
+            if (isMobile)
+              this.refs.header.style.removeProperty('top')
+
+            this.set({isMobile})
+          }
         )
       }
     }

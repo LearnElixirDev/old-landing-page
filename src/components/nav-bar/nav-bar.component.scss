@@ -16,13 +16,13 @@ header.mdc-reverse-elevation--z6 {
 }
 
 header .mdc-top-app-bar__section {
-  @include breakpoint($lt-md) {
+  @include breakpoint($lt-sm) {
     padding: 0;
   }
 }
 
 header nav a {
-  @include breakpoint($lt-md) {
+  @include breakpoint($lt-sm) {
     height: 100%;
     flex: 1 1 auto;
     display: flex;

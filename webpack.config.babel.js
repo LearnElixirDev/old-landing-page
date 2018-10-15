@@ -13,9 +13,20 @@ import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
 import {pugMixins} from './pug-mixins'
 import Prism from 'node-prismjs'
+import SriPlugin from 'webpack-subresource-integrity'
 import {BundleAnalyzerPlugin} from 'webpack-bundle-analyzer'
+import WebpackPwaManifest from 'webpack-pwa-manifest'
+import {GenerateSW} from 'workbox-webpack-plugin'
+import ExcludeAssetsPlugin from 'webpack-exclude-assets-plugin'
+import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
+
+import {cond, T, always, test} from 'ramda'
+import {load} from 'dotenv'
 
 import {name as appName} from './package.json'
+
+load()
 
 const rootPath = (nPath) => path.resolve(__dirname, nPath)
 
@@ -29,17 +40,22 @@ const SASS_INCLUDES = ['src', 'node_modules']
 const STATIC_ENTRY_CHUNKS = ['home', 'blog', 'contact', 'process', 'quote']
 const BLOG_VIEW_CHUNKS = ['dangers-of-genservers']
 
+const distPath = (nPath) => path.resolve(DIST_PATH, nPath)
+const srcPath = (nPath) => path.resolve(SRC_PATH, nPath)
+
 const titleAdd = (name) => ` | ${name}`
 const createHtmlPlugin = (
   chunkName, filename,
-  append = '', template = '!!!pug-loader!./src/index.pug',
+  append = '', template = '!!pug-loader!./src/index.pug',
   extras = {}
 ) => new HtmlWebpackPlugin({
   ...extras,
+  NODE_ENV,
   filename,
   template,
   inject: true,
   title: `Lure${append}`,
+  // excludeAssets: [/style.*.js/],
   excludeChunks: BLOG_VIEW_CHUNKS
     .concat(STATIC_ENTRY_CHUNKS)
     .filter(chunk => chunk !== chunkName),
@@ -71,12 +87,68 @@ if (!IS_TEST) {
 
 if (IS_PROD) {
   PLUGINS.push(
+    new S3Plugin({
+      s3Options: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        region: 'us-west-2'
+      },
+
+      s3UploadOptions: {
+        Bucket: 'lure.is',
+        CacheControl: cond([
+          [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
+          [test(/index.html/), always('max-age=315360000, stale-while-revalidate=10, no-transform, public')],
+          [T, always('max-age=315360000, no-transform, public')]
+        ])
+      },
+
+      cloudfrontInvalidateOptions: {
+        DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+        Items: ['/index.html', '/runtime*', '/sw.js']
+      }
+    }),
     // new PurgecssPlugin({paths: glob.sync('./src/**/*')}),
     // new Critters(),
+    new SriPlugin({hashFuncNames: ['sha256', 'sha384'], enabled: true}),
     new HashedModuleIdsPlugin(),
+    // new ExcludeAssetsPlugin({path: ['styles.+\.js$']}),
+    // new HtmlWebpackExcludeAssetsPlugin(),
+
     new MiniCssExtractPlugin({
-      filename: '[name]-[contenthash].css'
-    })
+      filename: '[name].[contenthash].css'
+    }),
+
+    new WebpackPwaManifest({
+      inject: true,
+      name: 'Lure Consulting',
+      short_name: 'Lure',
+      description: 'Lure Consulting helps you to build the best application for your needs',
+      background_color: '#FAFAFA',
+      start_url: '/',
+      display: 'standalone',
+      theme_color: '#00C0CD',
+      serviceworker: {
+        src: 'sw.js',
+        scope: '/',
+        use_cache: false
+      },
+      icons: [{
+        src: path.resolve('src/assets/favicon/android-chrome-512x512.png'),
+        sizes: [96, 128, 192, 256, 384, 512]
+      }]
+    }),
+
+    new GenerateSW({
+      globDirectory: DIST_PATH,
+      swDest: distPath('sw.js'),
+      skipWaiting: true,
+      clientsClaim: true,
+      maximumFileSizeToCacheInBytes: 6100000,
+      navigateFallback: '/',
+      dontCacheBustUrlsMatching: /.+\..+\..+$/,
+      offlineGoogleAnalytics: true
+    }),
   )
 }
 
@@ -124,18 +196,24 @@ const ENTRY = Object.assign(
 export default {
   mode: IS_PROD ? 'production' : 'development',
   devtool: IS_PROD ? false : 'eval-source-map',
-  entry: Object.assign(ENTRY, {polyfill: './src/polyfill.js'}),
+  entry: Object.assign({polyfill: './src/polyfill.js'}, ENTRY),
 
   output: {
     path: DIST_PATH,
     chunkFilename: IS_PROD ? '[name].[contenthash].js' : '[name].js',
-    filename: IS_PROD ? '[name].[contenthash].js' : '[name].js'
+    filename: IS_PROD ? '[name].[contenthash].js' : '[name].js',
+    crossOriginLoading: IS_PROD ? 'anonymous' : false
   },
 
   module: {
     rules: [{
       test: /\.(png|jpg|jpeg)$/,
-      use: ['file-loader', {
+      use: [{
+        loader: 'file-loader',
+        options: {
+          name: IS_PROD ? '[name].[hash].[ext]' : '[name].[ext]'
+        }
+      }, {
         loader: 'image-webpack-loader',
         options: {
           disable: !IS_PROD,
@@ -158,8 +236,7 @@ export default {
     }, {
       test: /\.svg$/,
       use: [
-        'raw-loader',
-        'svgo-loader'
+        'raw-loader'
       ]
     }, {
       test: /\.s?css/,
@@ -190,6 +267,7 @@ export default {
       loader: 'svelte-loader',
       options: {
         hotReload: IS_DEV,
+        emitCss: IS_PROD,
         preprocess: {
           markup({content, ...rest}) {
             return {
@@ -226,7 +304,13 @@ export default {
     }]
   },
 
-  plugins: PLUGINS,
+  plugins: [
+    ...PLUGINS,
+    new CopyWebpackPlugin([
+      {from: srcPath('assets'), to: distPath('assets')},
+      {from: srcPath('assets/favicon/favicon.ico'), to: DIST_PATH}
+    ])
+  ],
 
   resolve: {
     mainFields: ['svelte', 'browser', 'module', 'main'],
@@ -234,7 +318,7 @@ export default {
   },
 
   optimization: !IS_PROD ? {} : {
-    runtimeChunk: 'multiple',
+    runtimeChunk: 'single',
     moduleIds: 'hashed',
     splitChunks: {
       cacheGroups: {
@@ -245,15 +329,18 @@ export default {
           enforce: true
         },
 
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          minChunks: 2
-        },
-
         common: {
           name: 'common',
-          chunks: 'initial',
+          test: /\.(pug|js)$/,
+          chunks: 'all',
+          minChunks: 2,
+          priority: 10
+        },
+
+        svgs: {
+          name: 'svgs',
+          test: /\.svg$/,
+          chunks: 'all',
           minChunks: 2
         }
       }
@@ -266,7 +353,21 @@ export default {
         parallel: true,
         sourceMap: false,
         uglifyOptions: {
-          mangle: true
+          mangle: true,
+
+          compress: {
+            passes: 3,
+            toplevel: true,
+            warnings: false,
+            drop_console: true,
+            pure_getters: true,
+            collapse_vars: false
+          },
+
+          output: {
+            beautify: false,
+            wrap_iife: true,
+          }
         }
       })
     ]
@@ -274,7 +375,7 @@ export default {
 
   performance: {
     assetFilter(fileName) {
-      return /aws.sdk/.test(fileName)
+      return !/(aws.sdk|svg|styles.*\.js)/.test(fileName)
     }
   },
 

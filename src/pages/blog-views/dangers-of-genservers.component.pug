@@ -15,7 +15,7 @@ script.
 
     data() {
       return {
-        content: import('./dangers-of-genservers.md')
+        content: import(/* webpackChunkName: "post-dangers-of-genservers" */ './dangers-of-genservers.md')
           .then(({default: view}) => view)
       }
     }
