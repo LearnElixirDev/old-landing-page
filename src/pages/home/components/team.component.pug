@@ -1,7 +1,14 @@
-section.flex.flex-column.items-center.w-100.mt5.vh-75
+section.flex.flex-column.items-center.w-100.vh-75.justify-center.justify-start-ns.mt0.mt5-ns
   h1.navy.f-headline Lure's Team
 
-  .mt5.w-100
+  .relative.mt5.w-100
+    .tns-controls(ref:navContainer)
+      button.ph3.black.pointer
+        Icon(name='left-arrow')
+
+      button.ph3.black.pointer
+        Icon(name='right-arrow')
+
     div(ref:container)
       div
         TeamMember(name='Mika Kalathil', title='CTEO', description='Mika is one of the founders of Lure. He also writes our blog and elegant code!', image='mika')
@@ -16,12 +23,15 @@ section.flex.flex-column.items-center.w-100.mt5.vh-75
 
 script.
   import './team.component.scss'
+
   import {tns} from 'tiny-slider/src/tiny-slider'
+
+  import {Icon} from 'components'
 
   import TeamMember from './team-member.component.pug'
 
   export default {
-    components: {TeamMember},
+    components: {TeamMember, Icon},
 
     oncreate() {
       setTimeout(() => {
@@ -31,6 +41,7 @@ script.
           mouseDrag: true,
           swipeAngle: true,
           fixedWidth: 215,
+          controlsContainer: this.refs.navContainer,
           gutter: 15,
           loop: false,
           nav: false,

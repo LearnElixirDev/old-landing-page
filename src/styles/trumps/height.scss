@@ -1,3 +1,11 @@
 .h-page {
-  min-height: calc(100vh - #{$nav-bar-height} - #{$footer-height});
+  min-height: calc(100vh - #{$nav-bar-height-mobile} - #{$footer-height-mobile});
+
+  @include breakpoint($gt-xs) {
+    min-height: calc(100vh - #{$nav-bar-height} - #{$footer-height});
+  }
+}
+
+.vh-60 {
+  height: 60vh;
 }

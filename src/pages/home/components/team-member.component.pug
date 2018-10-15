@@ -13,13 +13,18 @@
 
       .ph3.pv2
         a.mdc-card__action(ref:linkedinIcon, href='{linkedInUrl}')
-          .w1
+          .w2.w1-ns
             Icon(name='linkedin')
 
 style.
   .mdc-card {
     height: 365px;
-    min-width: 215px;
+    max-width: 215px;
+  }
+
+  .mdc-card__media--square {
+    height: 215px;
+    width: 215px;
   }
 
 script.

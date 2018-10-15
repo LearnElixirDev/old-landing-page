@@ -3,12 +3,16 @@ section.hero-section.ph4.flex.justify-center.ph4.flex-wrap.flex-nowrap-ns
     h1.fw9.navy.lh-title.f-headline.tc.tl-ns Lure, helping you build the best Websites, Mobile, Web and Desktop Applications.
     h3.blue.lh-solid.f-subheadline.mt4.fw1.w-75-ns.tc.tl-ns Level-Up with high performing and scaleable applications with Lure’s Strategy, Design, and Development!
 
-    .mt4.tc.tl-ns
+    .mt4.tc.tl-ns.dn.db-ns
       MatButton(on:click='scrollToProcess()', className='w-75 w-auto-ns')
         span Learn More
 
   .pr5.flex.items-center.icon-size--l.w-40-ns.ml4-ns
     Icon(name='hero-app')
+
+  .mt4.tc.tl-ns.dn-ns.w-100
+    MatButton(on:click='scrollToProcess()', className='w-75 w-auto-ns')
+      span Learn More
 
 script.
   import './hero.component.scss'

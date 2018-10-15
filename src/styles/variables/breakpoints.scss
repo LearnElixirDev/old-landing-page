@@ -13,3 +13,6 @@ $sm: $gt-xs ($gt-sm - 1px);
 $md: $gt-sm ($gt-md - 1px);
 $lg: $gt-md ($gt-lg - 1px);
 
+$breakpoint-not-small: 'screen and (min-width: #{$gt-xs})';
+$breakpoint-medium: 'screen and (min-width: #{$gt-sm}) and (max-width: #{$gt-md - 1px})';
+$breakpoint-large: 'screen and (min-width: #{$gt-lg})';

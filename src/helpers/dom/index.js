@@ -1,4 +1,6 @@
 export * from './set-class'
+export * from './svg-to-dom'
+export * from './create-element-from-string'
 export * from './remove-class'
 export * from './wait-for-element'
 export * from './set-attribute'

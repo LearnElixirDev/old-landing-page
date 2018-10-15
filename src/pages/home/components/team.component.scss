@@ -12,3 +12,54 @@ $width-all-team-members-fit: 1150px;
     padding-right: 0;
   }
 }
+
+.tns-outer {
+  position: relative;
+}
+
+.tns-controls {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+
+  &:active, &:focus {
+    outline: none;
+  }
+
+  [data-controls='prev']:disabled + [data-controls='next'] {
+    margin-left: auto;
+  }
+
+  button {
+    height: 100%;
+    width: 10%;
+    border: 0;
+
+    &:active, &:focus {
+      outline: none;
+    }
+
+    &:disabled {
+      display: none;
+    }
+  }
+
+  button svg {
+    max-width: 30px;
+    margin-left: auto;
+  }
+
+  [data-controls='next'] {
+    background: linear-gradient(to right, transparent, white);
+  }
+
+  [data-controls='prev'] {
+    background: linear-gradient(to left, transparent, white);
+  }
+}

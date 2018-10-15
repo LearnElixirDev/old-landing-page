@@ -1,5 +1,36 @@
+@import '~breakpoint-sass';
 @import '~styles/utility';
 
 header.mdc-top-app-bar {
   background-color: $white;
+}
+
+header.mdc-top-app-bar.mdc-top-app-bar--fixed {
+  bottom: 0;
+}
+
+header.mdc-reverse-elevation--z6 {
+  box-shadow: 0px -2px 5px -1px rgba(0, 0, 0, 0.2),
+              0px 1px 10px 0px rgba(0, 0, 0, 0.14),
+              0px -3px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+header .mdc-top-app-bar__section {
+  @include breakpoint($lt-md) {
+    padding: 0;
+  }
+}
+
+header nav a {
+  @include breakpoint($lt-md) {
+    height: 100%;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.mr4 {
+      margin-right: 0;
+    }
+  }
 }

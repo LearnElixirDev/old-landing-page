@@ -1,0 +1,5 @@
+body {
+  @include breakpoint($lt-sm) {
+    padding-bottom: $nav-bar-height-mobile !important;
+  }
+}

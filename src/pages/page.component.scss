@@ -1,6 +1,11 @@
+@import '~breakpoint-sass';
 @import '~styles/utility';
 
 main {
-  padding-top: $nav-bar-height;
-  min-height: calc(100vh - #{$footer-height});
+  min-height: calc(100vh - #{$footer-height} - #{$nav-bar-height - 5px});
+
+  @include breakpoint($gt-xs) {
+    min-height: calc(100vh - #{$footer-height});
+    padding-top: $nav-bar-height;
+  }
 }

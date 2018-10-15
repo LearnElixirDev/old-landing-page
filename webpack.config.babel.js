@@ -1,14 +1,19 @@
 import path from 'path'
+import glob from 'glob'
 import pug from 'pug'
 import sass from 'node-sass'
+import postcss from 'postcss'
 import {optimize, HashedModuleIdsPlugin} from 'webpack'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+// import PurgecssPlugin from 'purgecss-webpack-plugin'
+import Critters from 'critters-webpack-plugin'
 import S3Plugin from 'webpack-s3-plugin'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
 import {pugMixins} from './pug-mixins'
 import Prism from 'node-prismjs'
+import {BundleAnalyzerPlugin} from 'webpack-bundle-analyzer'
 
 import {name as appName} from './package.json'
 
@@ -47,16 +52,7 @@ const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
   return acc
 }, {})
 
-const PLUGINS = []
-
-if (IS_PROD) {
-  PLUGINS.push(
-    new HashedModuleIdsPlugin(),
-    new MiniCssExtractPlugin({
-      filename: '[name]-[contenthash].css'
-    })
-  )
-}
+const PLUGINS = [] // [new BundleAnalyzerPlugin({server: true})]
 
 if (!IS_TEST) {
   PLUGINS.push(
@@ -72,6 +68,53 @@ if (!IS_TEST) {
     )
   )
 }
+
+if (IS_PROD) {
+  PLUGINS.push(
+    // new PurgecssPlugin({paths: glob.sync('./src/**/*')}),
+    // new Critters(),
+    new HashedModuleIdsPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '[name]-[contenthash].css'
+    })
+  )
+}
+
+const postcssRender = ({code, map}, filename) => {
+  if (IS_PROD)
+    return postcss().process(code, {from: filename})
+      .then(({css}) => ({code: css, map}))
+  else
+    return Promise.resolve({code, map})
+}
+
+const sassRender = (content, filename) => new Promise((resolve, reject) => {
+  sass.render({
+    data: content,
+    includePaths: SASS_INCLUDES,
+    sourceMap: true,
+    outFile: 'x', // this is necessary, but is ignored
+    importer(url, prev) {
+      if (/^~.*/.test(url)) {
+        const filePath = url.replace(/^~/, '')
+        const nodeModulePath = `./node_modules/${filePath}`
+
+        return {file: path.resolve(nodeModulePath)}
+      } else {
+        const relativeFilePath = filename.replace(new RegExp('[^\\/]+$'), '')
+
+        return {file: path.resolve(relativeFilePath, url)}
+      }
+    }
+  }, (err, result) => {
+    if (err) return reject(err)
+
+    resolve({
+      code: result.css,
+      map: result.map
+    })
+  })
+})
 
 const ENTRY = Object.assign(
   convertToEntryPaths(STATIC_ENTRY_CHUNKS, 'pages'),
@@ -139,34 +182,9 @@ export default {
             }
           },
 
-          style({content, attributes, filename}) {
-            return new Promise((resolve, reject) => {
-              sass.render({
-                data: content,
-                includePaths: SASS_INCLUDES,
-                sourceMap: true,
-                outFile: 'x', // this is necessary, but is ignored
-                importer(url, prev) {
-                  if (/^~.*/.test(url)) {
-                    const filePath = url.replace(/^~/, '')
-                    const nodeModulePath = `./node_modules/${filePath}`
-
-                    return {file: path.resolve(nodeModulePath)}
-                  } else {
-                    const relativeFilePath = filename.replace(new RegExp('[^\\/]+$'), '')
-
-                    return {file: path.resolve(relativeFilePath, url)}
-                  }
-                }
-              }, (err, result) => {
-                if (err) return reject(err)
-
-                resolve({
-                  code: result.css,
-                  map: result.map
-                })
-              })
-            })
+          style({content, filename}) {
+            return sassRender(content, filename)
+              .then(content => postcssRender(content, filename))
           }
         }
       }
@@ -210,7 +228,7 @@ export default {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendors',
-          chunks: 'all'
+          minChunks: 2
         },
 
         common: {

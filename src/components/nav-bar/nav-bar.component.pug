@@ -1,21 +1,27 @@
-svelte:window(on:scroll='onScroll()')
+svelte:window(on:scroll='onWindowScroll()', on:resize='onWindowResize()')
 
-header.mdc-top-app-bar.mdc-elevation-transition(ref:header, class:mdc-elevation--z6='isPastTop')
+header.mdc-top-app-bar.mdc-elevation-transition(
+  ref:header,
+  class:mdc-elevation--z6='isPastTop',
+  class:mdc-reverse-elevation--z6='isMobile',
+  class:mdc-top-app-bar--fixed='isMobile'
+)
   .mdc-top-app-bar__row
     .mdc-top-app-bar__section.justify-between
-      a.db.w4(href='/')
+      a.w4.dn.db-ns(href='/')
         Icon(name='lure-logo' class='test')
 
-      nav
-        a.mr4.link.gray.hover-moon-gray(href='/') Home
-        a.mr4.link.gray.hover-moon-gray(href='/process') Process
-        a.mr4.link.gray.hover-moon-gray(href='/blog') Blog
-        +if('isPastTop')
+      nav.h-100.h-auto-ns.w-100.w-auto-ns.flex.db-ns.justify-around.items-center
+        a.mr4.link.gray.hover-washed-blue(href='/', class:washed-blue=`url === '/'`) Home
+        a.mr4.link.gray.hover-washed-blue(href='/process', class:washed-blue=`url === '/process'`) Process
+        a.mr4.link.gray.hover-washed-blue(href='/blog', class:washed-blue=`url === '/blog'`) Blog
+
+        +if('isContactButtonVisible')
           MatButton
-            a.white(href='/contact') Contact
+            a.white(href='/contact', class:washed-blue=`url === '/contact'`) Contact
 
           +else
-            a.link.gray.hover-moon-gray(href='/contact') Contact
+            a.link.gray.hover-washed-blue(href='/contact', class:washed-blue=`url === '/contact'`) Contact
 
 script.
   import './nav-bar.component.scss'
@@ -28,11 +34,22 @@ script.
 
   let elementHeight = 64
 
+  const isPastTop = () => window.scrollY > elementHeight
+
   const setPastTop = debounceTime(100, (getPastTop, setPastTop) => {
-    const newPastTop = window.scrollY > elementHeight
+    const newPastTop = isPastTop()
 
     if (getPastTop() !== newPastTop)
       setPastTop(newPastTop)
+  })
+
+  const isMobile = () => window.innerWidth <= 600
+
+  const setIsMobile = debounceTime(50, (getIsMobile, setIsMobile) => {
+    const newIsMobile = isMobile()
+
+    if (getIsMobile() !== newIsMobile)
+      setIsMobile(newIsMobile)
   })
 
   export default {
@@ -40,8 +57,14 @@ script.
 
     data() {
       return {
-        isPastTop: false
+        isPastTop: isPastTop(),
+        isMobile: isMobile(),
+        url: location.pathname
       }
+    },
+
+    computed: {
+      isContactButtonVisible: ({isPastTop, isMobile}) => !isMobile && isPastTop
     },
 
     oncreate() {
@@ -49,10 +72,17 @@ script.
     },
 
     methods: {
-      onScroll() {
+      onWindowScroll() {
         setPastTop(
           () => this.get().isPastTop,
           (isPastTop) => this.set({isPastTop})
+        )
+      },
+
+      onWindowResize() {
+        setIsMobile(
+          () => this.get().isMobile,
+          (isMobile) => this.set({isMobile})
         )
       }
     }
