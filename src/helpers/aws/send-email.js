@@ -28,5 +28,5 @@ const createCredentialsAndSendEmail = ({config, Lambda, CognitoIdentityCredentia
   })
 } 
 
-export const sendEmail = (name, email, phoneNumber, message) => import('aws-sdk')
+export const sendEmail = (name, email, phoneNumber, message) => import(/* webpackChunkName: "aws-sdk" */ 'aws-sdk')
   .then((AWS) => createCredentialsAndSendEmail(AWS, name, email, phoneNumber, message))

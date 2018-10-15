@@ -135,7 +135,26 @@ export default {
   module: {
     rules: [{
       test: /\.(png|jpg|jpeg)$/,
-      loader: 'file-loader'
+      use: ['file-loader', {
+        loader: 'image-webpack-loader',
+        options: {
+          disable: !IS_PROD,
+
+          webp: {
+            quality: 90
+          },
+
+          mozjpeg: {
+            progressive: true,
+            quality: 90
+          },
+
+          pngquant: {
+            quality: '75-90',
+            speed: 4
+          }
+        }
+      }]
     }, {
       test: /\.svg$/,
       use: [
@@ -215,7 +234,8 @@ export default {
   },
 
   optimization: !IS_PROD ? {} : {
-    runtimeChunk: 'single',
+    runtimeChunk: 'multiple',
+    moduleIds: 'hashed',
     splitChunks: {
       cacheGroups: {
         styles: {
@@ -250,6 +270,12 @@ export default {
         }
       })
     ]
+  },
+
+  performance: {
+    assetFilter(fileName) {
+      return /aws.sdk/.test(fileName)
+    }
   },
 
   devServer: {

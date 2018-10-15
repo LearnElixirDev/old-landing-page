@@ -58,7 +58,7 @@ script.
 
     computed: {
       imageUrl: ({name}) => import(
-        /*webpackChunkName: "[request]" */
+        /* webpackMode: "lazy-once", webpackChunkName: "team-member-images" */
         `assets/team-members-${getLoweredFirstName(name)}.jpg`
       )
         .then(({default: imageUrl}) => imageUrl)
