@@ -1,10 +1,12 @@
-- const description = 'Our network of vetted talent can help your startup with strategy, design, and development so you can preserve your equity for investors.'
+- const description = htmlWebpackPlugin.options.blogDescription
+- const title = htmlWebpackPlugin.options.title
+- const blogUrl = htmlWebpackPlugin.options.blogUrl
 
-meta(property='og:title' content='Take your startup to the next level')
-meta(property='og:site_name' content='Lure Consulting')
+meta(property='og:title' content=title)
+meta(property='og:site_name' content='Lure\'s Blog')
 meta(property='og:image' content='https://lure.is/assets/lure-icon.svg')
 meta(property='og:description' content=description)
-meta(property='og:url' content='https://lure.is')
+meta(property='og:url' content=blogUrl)
 meta(name='description' content=description)
 meta(name='keywords' content='agency,consulting,web-development,development,engineering,web-design,design,ui/ux,functional programming,fp')
 
@@ -29,3 +31,4 @@ script(type='application/ld+json').
       "name": "Vancouver, B.C."
     }
   }
+

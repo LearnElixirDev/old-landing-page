@@ -45,7 +45,7 @@ script.
 
   const isMobile = () => window.innerWidth <= 600
 
-  const setIsMobile = debounceTime(50, (getIsMobile, setIsMobile) => {
+  const setIsMobile = debounceTime(100, (getIsMobile, setIsMobile) => {
     const newIsMobile = isMobile()
 
     if (getIsMobile() !== newIsMobile)

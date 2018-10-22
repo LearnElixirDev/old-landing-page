@@ -4,19 +4,26 @@
       title='Dangers of GenServers in Elixir',
       author='Mika Kalathil',
       content='{blogContent}',
-      imageAlt='Dangers of GenServer Chart'
+      imageAlt='Dangers of GenServer Chart',
+      imageUrl='{imageUrl}'
     )
 
 script.
   import {BlogView} from 'components'
 
+  const getBlogImage = (topic, name) => import(
+    /* webpackMode: "lazy-once", webpackChunkName: "blog-images" */
+    `assets/blog-${topic}-${name}.jpeg`
+  ).then(({default: blogImage}) => blogImage)
+
   export default {
     components: {BlogView},
-
     data() {
       return {
         content: import(/* webpackChunkName: "post-dangers-of-genservers" */ './dangers-of-genservers.md')
-          .then(({default: view}) => view)
+          .then(({default: view}) => view),
+
+        imageUrl: getBlogImage('elixir', 'dangers-of-genservers')
       }
     }
   }

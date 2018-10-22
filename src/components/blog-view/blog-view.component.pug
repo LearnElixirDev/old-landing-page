@@ -1,6 +1,8 @@
-.blog-view
-  div.tc
-    img.h4.w-100(src='{imageUrl}', alt='{imageAlt}')
+.blog-view.pt4
+  .tc
+    +await('imageUrl')
+      +then('imageSrc')
+        img.mt3.h4.vh-75.w-100(src='{imageSrc}', alt='{imageAlt}')
 
     h1.f-headline.navy.f-headline.lh-solid.mv3 {title}
     small.f6.blue {humanizedDate} - By {author}
@@ -8,6 +10,10 @@
   article.w-100.ph4.pb5.mt5.center.markdown-body {@html content}
 
 style.
+  img {
+    object-fit: cover;
+  }
+
   .blog-view {
     min-height: 100vh;
   }
@@ -40,7 +46,7 @@ script.
         author: '',
         title: '',
         content: '',
-        imageUrl: '',
+        imageUrl: Promise.resolve(),
         imageAlt: ''
       }
     },

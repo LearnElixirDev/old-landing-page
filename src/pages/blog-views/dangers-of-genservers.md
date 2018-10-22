@@ -123,7 +123,7 @@ Another issue around memory and GenServers is message passing, as it isn't cheap
 messages need to be passed in a different way, otherwise they will get copied in memory.
 Doing multiple copies with large messages can lead to your system taking up more resources
 than expected. Discord created [fastglobal](https://github.com/discordapp/fastglobal) as
-a solution to this problem.
+a solution to this problem, Another potential soution is converting the message to binary first, as binaries larger than 64 bits are stored in a shared area, and only the reference is passed between processes instead of the large binary data.
 
 ### Parallelism: Registries to the rescue
 If we want to solve some of these issues, particularly around creating bottlenecks or

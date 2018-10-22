@@ -1,0 +1,56 @@
+a.mdc-card-container(href='{blogLinkUrl}')
+  .flex.flex-column.justify-between.mdc-card.mdc-card__primary-action(tabindex='0')
+    +await('blogImageUrl')
+      +then('blogImage')
+        .mdc-card__media.mdc-card__media--16-9(style='background-image: url({blogImage});')
+
+        .ph2.navy
+          small {date}
+          h2.lh-copy.mt1 {title}
+          h3.normal.mt1 by <a href='{authorUrl}'>{authorName}</a>
+
+        p.navy.ph2.lh-copy {postSummary}
+
+        .mdc-card__actions
+          .mdc-card__action-buttons
+            MatButton(buttonType='text', nonRounded=true)
+              span Read
+
+style.
+  a.mdc-card-container:hover {
+    text-decoration: none;
+  }
+
+  .mdc-card {
+    width: 335px;
+    height: 475px;
+  }
+
+script.
+  import {MatButton} from 'components'
+
+  const getBlogImage = (topic, name) => import(
+    /* webpackMode: "lazy-once", webpackChunkName: "blog-images" */
+    `assets/blog-${topic}-${name}.jpeg`
+  ).then(({default: blogImage}) => blogImage)
+
+  export default {
+    components: {MatButton},
+
+    data() {
+      return {
+        name: '',
+        topic: '',
+        date: '',
+        title: '',
+        authorUrl: '',
+        authorName: '',
+        postSummary: ''
+      }
+    },
+
+    computed: {
+      blogLinkUrl: ({topic, name}) => `/blog/${topic}/${name}`,
+      blogImageUrl: ({topic, name}) => getBlogImage(topic, name)
+    }
+  }

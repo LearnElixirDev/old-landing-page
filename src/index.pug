@@ -14,7 +14,10 @@ html(lang='en')
     meta(name='viewport' content='width=device-width, initial-scale=1')
 
     - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
-      != require('!!apply-loader!pug-loader!./metadata.pug')
+      - if (htmlWebpackPlugin.options.blogDescription)
+        != require('!!apply-loader!pug-loader!./blog-metadata.pug')
+      - else
+        != require('!!apply-loader!pug-loader!./metadata.pug')
 
       // Google Analytics
       script(async src='https://www.googletagmanager.com/gtag/js?id=UA-127515836-1')
@@ -24,6 +27,8 @@ html(lang='en')
         gtag('js', new Date());
 
         gtag('config', 'UA-127515836-1');
+
+      <!--[if (lt IE 9)]><script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.8.7/min/tiny-slider.helper.ie8.js"></script><![endif]-->
 
   body
 

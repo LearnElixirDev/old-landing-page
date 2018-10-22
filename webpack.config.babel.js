@@ -44,6 +44,7 @@ const distPath = (nPath) => path.resolve(DIST_PATH, nPath)
 const srcPath = (nPath) => path.resolve(SRC_PATH, nPath)
 
 const titleAdd = (name) => ` | ${name}`
+
 const createHtmlPlugin = (
   chunkName, filename,
   append = '', template = '!!pug-loader!./src/index.pug',
@@ -59,6 +60,16 @@ const createHtmlPlugin = (
   excludeChunks: BLOG_VIEW_CHUNKS
     .concat(STATIC_ENTRY_CHUNKS)
     .filter(chunk => chunk !== chunkName),
+})
+
+const createBlogHtmlPlugin = (
+  chunkName, fileName,
+  append, blogDescription,
+  blogTitle, blogUrl, template = '!!pug-loader!./src/index.pug'
+) => createHtmlPlugin(chunkName, fileName, append, template, {
+  blogDescription,
+  blogTitle,
+  blogUrl
 })
 
 const convertChunkToPath = (chunk, path) => `./src${path ? `/${path}` : ''}/${chunk}.js`
@@ -77,10 +88,13 @@ if (!IS_TEST) {
     createHtmlPlugin('process', 'process.html', titleAdd('Process')),
     createHtmlPlugin('quote', 'quote.html', titleAdd('Quote')),
     createHtmlPlugin('blog', 'blog.html', titleAdd('Blog')),
-    createHtmlPlugin(
+    createBlogHtmlPlugin(
       'dangers-of-genservers',
       'blog/elixir/dangers-of-genservers.html',
-      titleAdd('Blog - Dangers of GenServers')
+      titleAdd('Blog - Dangers of GenServers'),
+      'Read and explore the potential dangers of using GenServers in Elixir. This is a deep dive into GenServers and discovering their limitations and strengths.',
+      'Dangers of Genservers in Elixir',
+      'blog/elixir/dangers-of-genservers'
     )
   )
 }
@@ -98,7 +112,7 @@ if (IS_PROD) {
         Bucket: 'lure.is',
         CacheControl: cond([
           [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
-          [test(/index.html/), always('max-age=315360000, stale-while-revalidate=10, no-transform, public')],
+          [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
           [T, always('max-age=315360000, no-transform, public')]
         ])
       },
