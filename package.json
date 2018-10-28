@@ -4,8 +4,12 @@
   "description": "Landing Page for lure",
   "author": "Mika Kalathil <mika@lure.is>",
   "browserslist": [
-    ">0.25%",
-    "last 5 ChromeAndroid versions"
+    ">= .05%",
+    "last 30 chrome versions",
+    "last 10 firefox versions",
+    "safari >= 10",
+    "ie >= 10",
+    "last 3 edge versions"
   ],
   "scripts": {
     "start": "webpack-dev-server --inline --hot",

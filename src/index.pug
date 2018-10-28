@@ -16,16 +16,15 @@ html(lang='en')
     - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
       - if (htmlWebpackPlugin.options.blogDescription)
         - const description = htmlWebpackPlugin.options.blogDescription
-        - const title = htmlWebpackPlugin.options.title
         - const blogUrl = htmlWebpackPlugin.options.blogUrl
         - const blogImage = htmlWebpackPlugin.options.blogImage
         - const blogTitle = htmlWebpackPlugin.options.blogTitle
         - const blogPublishDate = htmlWebpackPlugin.options.blogPublishDate
         - const author = htmlWebpackPlugin.options.author
 
-        meta(property='og:title' content=title)
+        meta(property='og:title' content=blogTitle)
         meta(property='og:site_name' content='Lure\'s Blog')
-        meta(property='og:image' content=blogImage)
+        meta(property='og:image' content=`https://lure.is/${blogImage}`)
         meta(property='og:description' content=description)
         meta(property='og:url' content=blogUrl)
         meta(name='description' content=description)
