@@ -63,14 +63,28 @@ const createHtmlPlugin = (
 })
 
 const createBlogHtmlPlugin = (
-  chunkName, fileName,
-  append, blogDescription,
-  blogTitle, blogUrl, template = '!!pug-loader!./src/index.pug'
-) => createHtmlPlugin(chunkName, fileName, append, template, {
-  blogDescription,
-  blogTitle,
-  blogUrl
-})
+  chunkName,
+  fileName,
+  title, {
+    author,
+    blogDescription,
+    blogTitle, blogUrl,
+    blogImage, blogPublishDate
+  },
+  template = '!!pug-loader!./src/index.pug'
+) => createHtmlPlugin(
+  chunkName,
+  fileName,
+  title,
+  template, {
+    blogDescription,
+    blogTitle,
+    blogImage,
+    blogUrl,
+    blogPublishDate,
+    author
+  }
+)
 
 const convertChunkToPath = (chunk, path) => `./src${path ? `/${path}` : ''}/${chunk}.js`
 const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
@@ -92,36 +106,41 @@ if (!IS_TEST) {
       'dangers-of-genservers',
       'blog/elixir/dangers-of-genservers.html',
       titleAdd('Blog - Dangers of GenServers'),
-      'Read and explore the potential dangers of using GenServers in Elixir. This is a deep dive into GenServers and discovering their limitations and strengths.',
-      'Dangers of Genservers in Elixir',
-      'blog/elixir/dangers-of-genservers'
+      {
+        blogDescription: 'At Lure, we use the latest software to bring you the best user experience. In this article, Lure CTEO Mika Kalathil outlines some of the technical details of GenServers in Elixir, which we use to serve a large multitude of people with high speed. This is a deep dive into GenServers and discovering their limitations and strengths.',
+        blogTitle: 'Dangers of Genservers in Elixir',
+        blogImage: 'assets/blog-elixir-dangers-of-genservers.jpeg',
+        blogUrl: 'blog/elixir/dangers-of-genservers',
+        blogPublishDate: '2018-11-1T16:14:24.526Z',
+        author: 'Mika Kalathil'
+      }
     )
   )
 }
 
 if (IS_PROD) {
   PLUGINS.push(
-    new S3Plugin({
-      s3Options: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        region: 'us-west-2'
-      },
+    // new S3Plugin({
+    //   s3Options: {
+    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    //     region: 'us-west-2'
+    //   },
 
-      s3UploadOptions: {
-        Bucket: 'lure.is',
-        CacheControl: cond([
-          [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
-          [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
-          [T, always('max-age=315360000, no-transform, public')]
-        ])
-      },
+    //   s3UploadOptions: {
+    //     Bucket: 'lure.is',
+    //     CacheControl: cond([
+    //       [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
+    //       [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
+    //       [T, always('max-age=315360000, no-transform, public')]
+    //     ])
+    //   },
 
-      cloudfrontInvalidateOptions: {
-        DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-        Items: ['/*']
-      }
-    }),
+    //   cloudfrontInvalidateOptions: {
+    //     DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+    //     Items: ['/*']
+    //   }
+    // }),
     // new PurgecssPlugin({paths: glob.sync('./src/**/*')}),
     // new Critters(),
     new SriPlugin({hashFuncNames: ['sha256', 'sha384'], enabled: true}),

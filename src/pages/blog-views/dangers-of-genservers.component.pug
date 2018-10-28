@@ -1,6 +1,7 @@
 +await('content')
   +then('blogContent')
     BlogView(
+      date='(date)',
       title='Dangers of GenServers in Elixir',
       author='Mika Kalathil',
       content='{blogContent}',
@@ -20,6 +21,7 @@ script.
     components: {BlogView},
     data() {
       return {
+        date: new Date("2018-11-1T16:14:24.526Z"),
         content: import(/* webpackChunkName: "post-dangers-of-genservers" */ './dangers-of-genservers.md')
           .then(({default: view}) => view),
 

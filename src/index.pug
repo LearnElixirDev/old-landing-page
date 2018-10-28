@@ -15,8 +15,70 @@ html(lang='en')
 
     - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
       - if (htmlWebpackPlugin.options.blogDescription)
+        - const description = htmlWebpackPlugin.options.blogDescription
+        - const title = htmlWebpackPlugin.options.title
+        - const blogUrl = htmlWebpackPlugin.options.blogUrl
+        - const blogImage = htmlWebpackPlugin.options.blogImage
+        - const blogTitle = htmlWebpackPlugin.options.blogTitle
+        - const blogPublishDate = htmlWebpackPlugin.options.blogPublishDate
+        - const author = htmlWebpackPlugin.options.author
+
+        meta(property='og:title' content=title)
+        meta(property='og:site_name' content='Lure\'s Blog')
+        meta(property='og:image' content=blogImage)
+        meta(property='og:description' content=description)
+        meta(property='og:url' content=blogUrl)
+        meta(name='description' content=description)
+
+        script(type='application/ld+json').
+          {
+            "@context": "http://schema.org",
+            "@type": "BlogPosting",
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": "https://lure.is/#{blogUrl}"
+            },
+            "headline": "#{blogTitle}",
+            "image": [
+              "https://lure.is/#{blogImage}",
+             ],
+            "datePublished": "#{blogPublishDate}",
+            "dateModified": "#{blogPublishDate}",
+            "author": {
+              "@type": "Person",
+              "name": "#{author}"
+            },
+             "publisher": {
+              "@type": "Organization",
+              "name": "Lure",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://lure.is/assets/favicon/favicon-32x32.png"
+              }
+            },
+            "description": "#{description}"
+          }
+
         != require('!!apply-loader!pug-loader!./blog-metadata.pug')
+
       - else
+        script(type='application/ld+json').
+          {
+            "@context": "http://schema.org",
+            "@type": "Corporation",
+            "description": "Our network of vetted talent can help your startup with strategy, design, and development so you can preserve your equity for investors.",
+            "url": "https://lure.is",
+            "name": "Lure Consulting",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://lure.is/assets/favicon/favicon-32x32.png"
+            },
+            "location": {
+              "@type": "City",
+              "name": "Vancouver, B.C."
+            }
+          }
+
         != require('!!apply-loader!pug-loader!./metadata.pug')
 
       // Google Analytics

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Landing Page for lure",
   "author": "Mika Kalathil <mika@lure.is>",
+  "browserslist": [">0.25%", "last 5 ChromeAndroid versions"],
   "scripts": {
     "start": "webpack-dev-server --inline --hot",
     "build": "rm -rf ./dist && env NODE_ENV=production webpack --progress"
