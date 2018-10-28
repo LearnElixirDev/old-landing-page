@@ -1,11 +1,22 @@
-button(
-  ref:button,
-  on:click,
-  {type},
-  {disabled},
-  class='{buttonClasses}'
-)
-  slot
++if('linkUrl')
+  a(
+    ref:button,
+    on:click,
+    href='{linkUrl}',
+    {disabled},
+    class='{buttonClasses}'
+  )
+    slot
+
+  +else
+    button(
+      ref:button,
+      on:click,
+      {type},
+      {disabled},
+      class='{buttonClasses}'
+    )
+      slot
 
 script.
   import './mat-button.component.scss'
@@ -16,6 +27,7 @@ script.
     data() {
       return {
         type: 'button',
+        linkUrl: '',
         nonRounded: false,
         disabled: false,
         buttonType: 'raised',

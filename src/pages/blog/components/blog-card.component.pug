@@ -5,11 +5,11 @@ a.mdc-card-container(href='{blogLinkUrl}')
         .mdc-card__media.mdc-card__media--16-9(style='background-image: url({blogImage});')
 
         .ph2.navy
-          small {date}
+          small.f7 {date}
           h2.lh-copy.mt1 {title}
-          h3.normal.mt1 by <a href='{authorUrl}'>{authorName}</a>
+          h3.normal.mt1.f7 by <a href='{authorUrl}'>{authorName}</a>
 
-        p.navy.ph2.lh-copy {postSummary}
+        p.navy.ph2.lh-copy.f6 {postSummary}
 
         .mdc-card__actions
           .mdc-card__action-buttons
@@ -23,7 +23,7 @@ style.
 
   .mdc-card {
     width: 335px;
-    min-height: 530px;
+    min-height: 500px;
   }
 
 script.

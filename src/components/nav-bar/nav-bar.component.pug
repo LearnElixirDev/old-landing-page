@@ -17,8 +17,8 @@ header.mdc-top-app-bar.mdc-elevation-transition(
         a.mr4.link.gray.hover-washed-blue(href='/blog', class:washed-blue=`url === '/blog'`) Blog
 
         +if('isContactButtonVisible')
-          MatButton
-            a.white(href='/contact', class:washed-blue=`url === '/contact'`) Contact
+          MatButton(linkUrl='/contact')
+            span.white Contact
 
           +else
             a.link.gray.hover-washed-blue(href='/contact', class:washed-blue=`url === '/contact'`) Contact
@@ -64,7 +64,7 @@ script.
     },
 
     computed: {
-      isContactButtonVisible: ({isPastTop, isMobile}) => !isMobile && isPastTop
+      isContactButtonVisible: ({isPastTop, isMobile, url}) => !isMobile && isPastTop && url !== '/contact'
     },
 
     oncreate() {

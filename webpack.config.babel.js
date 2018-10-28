@@ -21,7 +21,6 @@ import ExcludeAssetsPlugin from 'webpack-exclude-assets-plugin'
 import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import SitemapPlugin from 'sitemap-webpack-plugin'
-import HtmlCriticalWebpackPlugin from 'html-critical-webpack-plugin'
 
 import {cond, T, always, test} from 'ramda'
 import {load} from 'dotenv'
@@ -95,37 +94,6 @@ const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
   return acc
 }, {})
 
-const createCriticalHtmlPlugin = (chunkName) => new HtmlCriticalWebpackPlugin({
-  base: DIST_PATH,
-  src: `${chunkName}.html`,
-  dest: `${chunkName}.html`,
-  inline: true,
-  minify: true,
-  extract: true,
-  dimensions: [{
-    width: 480,
-    height: 800
-  }, {
-    width: 540,
-    height: 960
-  }, {
-    width: 800,
-    height: 1280
-  }, {
-    width: 1024,
-    height: 768
-  }, {
-    width: 1300,
-    height: 900
-  }, {
-    width: 1920,
-    height: 1200
-  }],
-  penthouse: {
-    blockJSRequests: false,
-  }
-})
-
 const PLUGINS = [] // [new BundleAnalyzerPlugin({server: true})]
 
 if (!IS_TEST) {
@@ -152,15 +120,8 @@ if (!IS_TEST) {
 }
 
 if (IS_PROD) {
-  const entryCriticalPlugins = STATIC_ENTRY_CHUNKS
-    .filter(a => a !== 'home')
-    .map(createCriticalHtmlPlugin)
-    .concat([
-      createCriticalHtmlPlugin('blog/elixir/dangers-of-genservers'),
-      createCriticalHtmlPlugin('index')
-    ])
-
   PLUGINS.push(
+    new HashedModuleIdsPlugin(),
     // new ExcludeAssetsPlugin({path: ['styles.+\.js$']}),
     // new HtmlWebpackExcludeAssetsPlugin(),
 
@@ -169,14 +130,19 @@ if (IS_PROD) {
       chunkFilename: '[name].[contenthash].css'
     }),
 
-    // new Critters(),
-    // ...entryCriticalPlugins,
     new PurgecssPlugin({
       paths: glob.sync([srcPath('**/*')], {nodir: true}),
-      whitelistPatterns: [/^mdc-/, /^tns/, /^svelte/]
+      whitelistPatterns: [
+        /^mdc-/,
+        /^tns/, /^token/, /^svelte/,
+        /^markdown-body/, /^language-/
+      ],
+      whitelistPatternsChildren: [
+        /^markdown-body/, /^language-/,
+        /^token/, /^svelte/
+      ]
     }),
 
-    new HashedModuleIdsPlugin(),
     new SitemapPlugin('https://lure.is', [{
       path: '/',
       lastMod: '2018-11-01',
@@ -223,27 +189,27 @@ if (IS_PROD) {
       }]
     }),
 
-    // new S3Plugin({
-    //   s3Options: {
-    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    //     region: 'us-west-2'
-    //   },
+    new S3Plugin({
+      s3Options: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        region: 'us-west-2'
+      },
 
-    //   s3UploadOptions: {
-    //     Bucket: 'lure.is',
-    //     CacheControl: cond([
-    //       [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
-    //       [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
-    //       [T, always('max-age=315360000, no-transform, public')]
-    //     ])
-    //   },
+      s3UploadOptions: {
+        Bucket: 'lure.is',
+        CacheControl: cond([
+          [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
+          [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
+          [T, always('max-age=315360000, no-transform, public')]
+        ])
+      },
 
-    //   cloudfrontInvalidateOptions: {
-    //     DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-    //     Items: ['/*']
-    //   }
-    // }),
+      cloudfrontInvalidateOptions: {
+        DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+        Items: ['/*']
+      }
+    }),
 
     new SriPlugin({hashFuncNames: ['sha256', 'sha384'], enabled: true}),
 
@@ -251,7 +217,6 @@ if (IS_PROD) {
       swDest: distPath('sw.js'),
       skipWaiting: true,
       clientsClaim: true,
-      maximumFileSizeToCacheInBytes: 6100000,
       navigateFallback: '/',
       offlineGoogleAnalytics: true
     })
@@ -481,7 +446,7 @@ export default {
 
   performance: {
     assetFilter(fileName) {
-      return !/(aws.sdk|svg|styles.*\.js)/.test(fileName)
+      return !/(aws.sdk|svg)/.test(fileName)
     }
   },
 
@@ -495,8 +460,13 @@ export default {
       children: false,
       errorDetails: true,
       colors: true,
-      entrypoints: true,
-      warningsFilter: (warnings) => /Conflicting order between/.test(warnings)
+      entrypoints: false,
+      chunks: false,
+      cached: false,
+      builtAt: false,
+      chunkModules: false,
+      chunkGroups: false,
+      chunkOrigins: false
     },
 
     overlay: {
