@@ -1,12 +1,12 @@
 import path from 'path'
-import glob from 'glob'
+import glob from 'glob-all'
 import pug from 'pug'
 import sass from 'node-sass'
 import postcss from 'postcss'
 import {optimize, HashedModuleIdsPlugin} from 'webpack'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-// import PurgecssPlugin from 'purgecss-webpack-plugin'
+import PurgecssPlugin from 'purgecss-webpack-plugin'
 import Critters from 'critters-webpack-plugin'
 import S3Plugin from 'webpack-s3-plugin'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
@@ -20,6 +20,8 @@ import {GenerateSW} from 'workbox-webpack-plugin'
 import ExcludeAssetsPlugin from 'webpack-exclude-assets-plugin'
 import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
+import SitemapPlugin from 'sitemap-webpack-plugin'
+import HtmlCriticalWebpackPlugin from 'html-critical-webpack-plugin'
 
 import {cond, T, always, test} from 'ramda'
 import {load} from 'dotenv'
@@ -93,6 +95,37 @@ const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
   return acc
 }, {})
 
+const createCriticalHtmlPlugin = (chunkName) => new HtmlCriticalWebpackPlugin({
+  base: DIST_PATH,
+  src: `${chunkName}.html`,
+  dest: `${chunkName}.html`,
+  inline: true,
+  minify: true,
+  extract: true,
+  dimensions: [{
+    width: 480,
+    height: 800
+  }, {
+    width: 540,
+    height: 960
+  }, {
+    width: 800,
+    height: 1280
+  }, {
+    width: 1024,
+    height: 768
+  }, {
+    width: 1300,
+    height: 900
+  }, {
+    width: 1920,
+    height: 1200
+  }],
+  penthouse: {
+    blockJSRequests: false,
+  }
+})
+
 const PLUGINS = [] // [new BundleAnalyzerPlugin({server: true})]
 
 if (!IS_TEST) {
@@ -111,7 +144,7 @@ if (!IS_TEST) {
         blogTitle: 'Dangers of Genservers in Elixir',
         blogImage: 'assets/blog-elixir-dangers-of-genservers.jpeg',
         blogUrl: 'blog/elixir/dangers-of-genservers',
-        blogPublishDate: '2018-11-1T16:14:24.526Z',
+        blogPublishDate: '2018-10-29T16:14:24.526Z',
         author: 'Mika Kalathil'
       }
     )
@@ -119,38 +152,56 @@ if (!IS_TEST) {
 }
 
 if (IS_PROD) {
+  const entryCriticalPlugins = STATIC_ENTRY_CHUNKS
+    .filter(a => a !== 'home')
+    .map(createCriticalHtmlPlugin)
+    .concat([
+      createCriticalHtmlPlugin('blog/elixir/dangers-of-genservers'),
+      createCriticalHtmlPlugin('index')
+    ])
+
   PLUGINS.push(
-    // new S3Plugin({
-    //   s3Options: {
-    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    //     region: 'us-west-2'
-    //   },
-
-    //   s3UploadOptions: {
-    //     Bucket: 'lure.is',
-    //     CacheControl: cond([
-    //       [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
-    //       [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
-    //       [T, always('max-age=315360000, no-transform, public')]
-    //     ])
-    //   },
-
-    //   cloudfrontInvalidateOptions: {
-    //     DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-    //     Items: ['/*']
-    //   }
-    // }),
-    // new PurgecssPlugin({paths: glob.sync('./src/**/*')}),
-    // new Critters(),
-    new SriPlugin({hashFuncNames: ['sha256', 'sha384'], enabled: true}),
-    new HashedModuleIdsPlugin(),
     // new ExcludeAssetsPlugin({path: ['styles.+\.js$']}),
     // new HtmlWebpackExcludeAssetsPlugin(),
 
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css'
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[name].[contenthash].css'
     }),
+
+    // new Critters(),
+    // ...entryCriticalPlugins,
+    new PurgecssPlugin({
+      paths: glob.sync([srcPath('**/*')], {nodir: true}),
+      whitelistPatterns: [/^mdc-/, /^tns/, /^svelte/]
+    }),
+
+    new HashedModuleIdsPlugin(),
+    new SitemapPlugin('https://lure.is', [{
+      path: '/',
+      lastMod: '2018-11-01',
+      changeFreq: 'weekly'
+    }, {
+      path: '/contact',
+      lastMod: '2018-11-01',
+      changeFreq: 'weekly'
+    }, {
+      path: '/process',
+      lastMod: '2018-11-01',
+      changeFreq: 'weekly'
+    }, {
+      path: '/quote',
+      lastMod: '2018-11-01',
+      changeFreq: 'weekly'
+    }, {
+      path: '/blog',
+      lastMod: '2018-11-01',
+      changeFreq: 'weekly'
+    }, {
+      path: '/blog/elixir/dangers-of-genservers',
+      lastMod: '2018-11-01',
+      changeFreq: 'weekly'
+    }]),
 
     new WebpackPwaManifest({
       inject: true,
@@ -172,16 +223,38 @@ if (IS_PROD) {
       }]
     }),
 
+    // new S3Plugin({
+    //   s3Options: {
+    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    //     region: 'us-west-2'
+    //   },
+
+    //   s3UploadOptions: {
+    //     Bucket: 'lure.is',
+    //     CacheControl: cond([
+    //       [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
+    //       [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
+    //       [T, always('max-age=315360000, no-transform, public')]
+    //     ])
+    //   },
+
+    //   cloudfrontInvalidateOptions: {
+    //     DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+    //     Items: ['/*']
+    //   }
+    // }),
+
+    new SriPlugin({hashFuncNames: ['sha256', 'sha384'], enabled: true}),
+
     new GenerateSW({
-      globDirectory: DIST_PATH,
       swDest: distPath('sw.js'),
       skipWaiting: true,
       clientsClaim: true,
       maximumFileSizeToCacheInBytes: 6100000,
       navigateFallback: '/',
-      dontCacheBustUrlsMatching: /.+\..+\..+$/,
       offlineGoogleAnalytics: true
-    }),
+    })
   )
 }
 
@@ -420,7 +493,10 @@ export default {
       modules: false,
       warnings: true,
       children: false,
-      errorDetails: true
+      errorDetails: true,
+      colors: true,
+      entrypoints: true,
+      warningsFilter: (warnings) => /Conflicting order between/.test(warnings)
     },
 
     overlay: {

@@ -9,36 +9,25 @@
 
   article.w-100.pb5.mt5.center.markdown-body {@html content}
 
-style.
-  img {
-    object-fit: cover;
-  }
-
-  .blog-view {
-    min-height: 100vh;
-  }
-
-  .markdown-body {
-    max-width: 650px;
-  }
-
-  .markdown-body :global(li) {
-    list-style-type: disc;
-  }
-
-  .markdown-body :global(pre) {
-    background-color: #2d2d2d;
-  }
-
-  .markdown-body > :global(h1) {
-    border-bottom: 0;
-  }
-
-  .markdown-body :global(em) {
-    font-style: italic;
-  }
-
 script.
+  import './blog-view.component.scss'
+
+  const getNavigatorLanguage = () => {
+    if (navigator.languages && navigator.languages.length) {
+      return navigator.languages[0];
+    } else {
+      return navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en';
+    }
+  }
+
+  const dateStringToHumanizedDate = (dateString) => {
+    const date = new Date(dateString)
+
+    return date.toLocaleDateString(getNavigatorLanguage(), {
+      year: 'numeric', month: 'long', day: 'numeric'
+    })
+  }
+
   export default {
     data() {
       return {
@@ -52,6 +41,6 @@ script.
     },
 
     computed: {
-      humanizedDate: ({date}) => date.toLocaleString()
+      humanizedDate: ({date}) => dateStringToHumanizedDate(date)
     }
   }

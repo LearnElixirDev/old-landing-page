@@ -1,6 +1,4 @@
-_This article assumes basic familiarity with GenServers
-
-- [Elixir School GenServer](https://elixirschool.com/en/lessons/advanced/otp-concurrency/#genserver)
+*This article assumes basic familiarity with [GenServers](https://elixirschool.com/en/lessons/advanced/otp-concurrency/#genserver)*
 
 ### Common GenServer Mistakes
 
@@ -18,7 +16,7 @@ multiple instances/processes of that GenServer running.
 Elixir's concurrency and parallelism is achieved through processes.
 
 <div style='display: flex; justify-content: center; align-items: center; margin: 20px 0;'>
-<img src='https://mikakalathil.ca/assets/svg/gen-server-type-diff.svg' height='300px'>
+<img src='https://mikakalathil.ca/assets/svg/gen-server-type-diff.svg'>
 </div>
 
 ### What are the costs of GenServers?

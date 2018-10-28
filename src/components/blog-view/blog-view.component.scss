@@ -1,0 +1,38 @@
+@import '~breakpoint-sass';
+@import '~styles/utility';
+
+img {
+  object-fit: cover;
+}
+
+.blog-view {
+  min-height: 100vh;
+}
+
+.markdown-body {
+  max-width: 650px;
+  padding-left: $spacing-large;
+  padding-right: $spacing-large;
+}
+
+.markdown-body img {
+  @include breakpoint($lt-md) {
+    width: 95%;
+  }
+}
+
+.markdown-body li {
+  list-style-type: disc;
+}
+
+.markdown-body pre {
+  background-color: #2d2d2d;
+}
+
+.markdown-body > h1 {
+  border-bottom: 0;
+}
+
+.markdown-body em {
+  font-style: italic;
+}
