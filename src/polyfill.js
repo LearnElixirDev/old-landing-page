@@ -32,3 +32,7 @@ if (typeof Object.assign != 'function') {
     configurable: true
   })
 }
+
+if (process.env.NODE_ENV === 'production')
+  import('autotrack')
+

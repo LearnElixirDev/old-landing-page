@@ -1,6 +1,6 @@
 .flex.justify-center.items-center.ph4
   .w-100.w-33-ns
-    ContactForm(title='{title}')
+    ContactForm(title='{title}', page='{page}')
 
   .w-25.ml5.w-25.icon-size--m.dn.db-ns(class='{iconClass}')
     Icon(name='{iconName}')
@@ -15,7 +15,8 @@ script.
       return {
         iconClass: '',
         iconName: 'contact',
-        title: 'Contact Us'
+        title: 'Contact Us',
+        page: ''
       }
     }
   }

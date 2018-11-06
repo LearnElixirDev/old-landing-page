@@ -1,7 +1,7 @@
-+if('title')
-  h2.navy.lh-solid.f-headline.tc.tl-ns {title}
-
 form.mt4(on:submit='onSubmit(event)')
+  span.db.f3 Give us your name and phone number
+and we will give you a call to discuss your
+needs and expectations.
   +if('errorMessage')
     span.red.f3 {errorMessage}
 
@@ -24,24 +24,6 @@ form.mt4(on:submit='onSubmit(event)')
     className='w-100 w-75-ns mt3',
     readonly='{isEmailSent}',
     on:change=`setUserInfo('phoneNumber', event)`
-  )
-
-  MatTextField(
-    label='Email',
-    autocomplete='email',
-    className='w-100 w-75-ns mt3',
-    readonly='{isEmailSent}',
-    on:change=`setUserInfo('email', event)`
-  )
-
-  MatTextarea(
-    label='Message',
-    rows='3',
-    cols='40',
-    className='mt3 w-100',
-    required=true,
-    readonly='{isEmailSent}',
-    on:change=`setUserInfo('message', event)`
   )
 
   .mt4.tc.tl-ns
@@ -74,7 +56,6 @@ script.
 
     data() {
       return {
-        page: '',
         errorMessage: false,
         isSendingEmail: false,
         isEmailSent: false,
@@ -115,19 +96,19 @@ script.
         event.preventDefault()
 
         const setErrorMessage = (errorMessage) => this.set({errorMessage})
-        const {messageInfo: {email, phoneNumber, name, message}, page} = this.get()
+        const {messageInfo: {email, phoneNumber, name, message}} = this.get()
 
         if (!email && !phoneNumber) {
           setErrorMessage(ERRORS.NO_CONTACT_METHOD())
         } else {
           const onError = tap((...args) => {
-            sendEvent('Contact', 'Error', `Contact Form - ${page}`)
+            sendEvent('Contact', 'Error', `Contact You via Phone - ${page}`)
 
             this.set({isSendingEmail: false})
           })
 
           const onSuccess = () => {
-            sendEvent('Contact', 'Sent', `Contact Form - ${page}`)
+            sendEvent('Contact', 'Sent', `Contact You via Phone - ${page}`)
 
             this.set({
              isSendingEmail: false,
@@ -137,7 +118,7 @@ script.
 
           this.set({isSendingEmail: true, errorMessage: ''})
 
-          sendEvent('Contact', 'Sending', `Contact Form - ${page}`)
+          sendEvent('Contact', 'Sending', `Contact You via Phone - %${}page`)
 
           sendEmail(name, email, phoneNumber, message)
             .then(onSuccess, onError)

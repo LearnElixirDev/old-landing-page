@@ -1,6 +1,6 @@
 .relative.flex.items-center.ph3.vh-75-ns
   .w-34-ns.ml0.ml5-ns
-    ContactForm(title='{title}')
+    ContactForm(title='{title}', page='{page}')
 
   .w-40.absolute.bottom-0.right-0.dn.db-ns
     Icon(name='phone-put-together')
@@ -13,7 +13,8 @@ script.
 
     data() {
       return {
-        title: ''
+        title: '',
+        page: ''
       }
     }
   }

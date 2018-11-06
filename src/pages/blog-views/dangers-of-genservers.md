@@ -93,8 +93,9 @@ processing the prior queue to your message. This creates a bottleneck.
 
 While this arrangement can be leveraged as a back-pressure system, there are much better solutions out
 there, like [GenStage](https://hexdocs.pm/gen_stage/GenStage.html). One of the reasons for this is
-timeouts. When calls start queuing up and taking longer than the timeout, GenServer will drop
-some messages and the information will be lost!
+timeouts. By default GenServers have a timeout of 5 seconds, after which your message will be dropped.
+This timeout can be changed to any number you would like as  well as `:infinity`. However, when `:infinity` is used there's a
+potential to overflow the mailbox with messages and crash the whole VM by running it out of memory.
 
 ##### Example:
 Say we've got a job processing system, and it batches up groups of 100 emails and sends them all at once. In another part of our API,
@@ -113,7 +114,7 @@ GenServers have the capability of storing large amounts of state data. But we ne
 because memory is not unlimited or cheap. And when it comes to message passing, large messages need to be passed in a different way from small ones, otherwise they will get copied in memory.
 Making multiple copies of large messages can take up more system resources
 than expected. Discord created [fastglobal](https://github.com/discordapp/fastglobal) as
-a solution to this problem. Another potential solution is converting the message to binary first, as binaries larger than 64 bits are stored in a shared area, and only the reference is passed between processes instead of the large binary data.
+a solution to this problem. Another potential solution is converting the message to binary first, as binaries larger than 64 bytes are stored in a shared area, and only the reference is passed between processes instead of the large binary data.
 
 ### Parallelism: Registries to the Rescue
 If we want to solve some of these issues, particularly around creating bottlenecks or

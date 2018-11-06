@@ -21,6 +21,7 @@ import ExcludeAssetsPlugin from 'webpack-exclude-assets-plugin'
 import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import SitemapPlugin from 'sitemap-webpack-plugin'
+import RobotstxtPlugin from 'robotstxt-webpack-plugin'
 
 import {cond, T, always, test} from 'ramda'
 import {load} from 'dotenv'
@@ -38,7 +39,7 @@ const IS_DEV = NODE_ENV === 'development'
 const SRC_PATH = rootPath('src')
 const DIST_PATH = rootPath('dist')
 const SASS_INCLUDES = ['src', 'node_modules']
-const STATIC_ENTRY_CHUNKS = ['home', 'blog', 'contact', 'process', 'quote']
+const STATIC_ENTRY_CHUNKS = ['home', 'blog', 'contact', 'process', 'quote', 'terms-of-service', 'privacy']
 const BLOG_VIEW_CHUNKS = ['dangers-of-genservers']
 
 const distPath = (nPath) => path.resolve(DIST_PATH, nPath)
@@ -46,9 +47,19 @@ const srcPath = (nPath) => path.resolve(SRC_PATH, nPath)
 
 const titleAdd = (name) => ` | ${name}`
 
+const getUrlPath = (url) => url.match('[^\/]+$')[0]
+const prerenderParams = (url) => encodeURIComponent(JSON.stringify({string: true, params: {url}, documentUrl: getUrlPath(url)}))
+
+const addTemplateLoaders = (indexPath, url) => {
+  // if (IS_PROD)
+  //   return `!!prerender-loader?${prerenderParams(url)}!pug-loader!${indexPath}`
+  // else
+    return `!!pug-loader!${indexPath}`
+}
+
 const createHtmlPlugin = (
   chunkName, filename,
-  append = '', template = '!!pug-loader!./src/index.pug',
+  append = '', template = addTemplateLoaders('./src/index.pug', `/${chunkName}`),
   extras = {}
 ) => new HtmlWebpackPlugin({
   ...extras,
@@ -72,7 +83,7 @@ const createBlogHtmlPlugin = (
     blogTitle, blogUrl,
     blogImage, blogPublishDate
   },
-  template = '!!pug-loader!./src/index.pug'
+  template = addTemplateLoaders('./src/index.pug', blogUrl)
 ) => createHtmlPlugin(
   chunkName,
   fileName,
@@ -94,15 +105,17 @@ const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
   return acc
 }, {})
 
-const PLUGINS = [] // [new BundleAnalyzerPlugin({server: true})]
+const PLUGINS = [] //new BundleAnalyzerPlugin({server: true})]
 
 if (!IS_TEST) {
   PLUGINS.push(
-    createHtmlPlugin('home', 'index.html'),
+    createHtmlPlugin('home', 'index.html', ` Consulting`),
     createHtmlPlugin('contact', 'contact.html', titleAdd('Contact')),
     createHtmlPlugin('process', 'process.html', titleAdd('Process')),
     createHtmlPlugin('quote', 'quote.html', titleAdd('Quote')),
     createHtmlPlugin('blog', 'blog.html', titleAdd('Blog')),
+    createHtmlPlugin('terms-of-service', 'terms-of-service.html', titleAdd('Terms of Service')),
+    createHtmlPlugin('privacy', 'privacy-policy.html', titleAdd('Privacy Policy')),
     createBlogHtmlPlugin(
       'dangers-of-genservers',
       'blog/elixir/dangers-of-genservers.html',
@@ -122,13 +135,17 @@ if (!IS_TEST) {
 if (IS_PROD) {
   PLUGINS.push(
     new HashedModuleIdsPlugin(),
+    new optimize.ModuleConcatenationPlugin(),
     // new ExcludeAssetsPlugin({path: ['styles.+\.js$']}),
     // new HtmlWebpackExcludeAssetsPlugin(),
+    new RobotstxtPlugin({host: 'https://lure.is', sitemap: 'https://lure.is/sitemap.xml'}),
 
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
       chunkFilename: '[name].[contenthash].css'
     }),
+
+    // new Critters({}),
 
     new PurgecssPlugin({
       paths: glob.sync([srcPath('**/*')], {nodir: true}),
@@ -167,6 +184,14 @@ if (IS_PROD) {
       path: '/blog/elixir/dangers-of-genservers',
       lastMod: '2018-11-01',
       changeFreq: 'weekly'
+    }, {
+      path: '/terms-of-service',
+      lastMod: '2018-11-03',
+      changeFreq: 'monthly'
+    }, {
+      path: '/privacy-policy',
+      lastMod: '2018-11-03',
+      changeFreq: 'monthly'
     }]),
 
     new WebpackPwaManifest({
@@ -430,8 +455,8 @@ export default {
             passes: 3,
             toplevel: true,
             warnings: false,
-            drop_console: true,
             pure_getters: true,
+            pure_funcs: ['console.log', 'console.debug'],
             collapse_vars: false
           },
 
