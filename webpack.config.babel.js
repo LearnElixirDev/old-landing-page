@@ -5,7 +5,6 @@ import sass from 'node-sass'
 import postcss from 'postcss'
 import {optimize, HashedModuleIdsPlugin} from 'webpack'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
 import PurgecssPlugin from 'purgecss-webpack-plugin'
 import Critters from 'critters-webpack-plugin'
 import S3Plugin from 'webpack-s3-plugin'
@@ -27,6 +26,7 @@ import {cond, T, always, test} from 'ramda'
 import {load} from 'dotenv'
 
 import {name as appName} from './package.json'
+import {createHtmlPages} from './webpack.html-pages'
 
 load()
 
@@ -45,59 +45,6 @@ const BLOG_VIEW_CHUNKS = ['dangers-of-genservers']
 const distPath = (nPath) => path.resolve(DIST_PATH, nPath)
 const srcPath = (nPath) => path.resolve(SRC_PATH, nPath)
 
-const titleAdd = (name) => ` | ${name}`
-
-const getUrlPath = (url) => url.match('[^\/]+$')[0]
-const prerenderParams = (url) => encodeURIComponent(JSON.stringify({string: true, params: {url}, documentUrl: getUrlPath(url)}))
-
-const addTemplateLoaders = (indexPath, url) => {
-  // if (IS_PROD)
-  //   return `!!prerender-loader?${prerenderParams(url)}!pug-loader!${indexPath}`
-  // else
-    return `!!pug-loader!${indexPath}`
-}
-
-const createHtmlPlugin = (
-  chunkName, filename,
-  append = '', template = addTemplateLoaders('./src/index.pug', `/${chunkName}`),
-  extras = {}
-) => new HtmlWebpackPlugin({
-  ...extras,
-  NODE_ENV,
-  filename,
-  template,
-  inject: true,
-  title: `Lure${append}`,
-  // excludeAssets: [/style.*.js/],
-  excludeChunks: BLOG_VIEW_CHUNKS
-    .concat(STATIC_ENTRY_CHUNKS)
-    .filter(chunk => chunk !== chunkName),
-})
-
-const createBlogHtmlPlugin = (
-  chunkName,
-  fileName,
-  title, {
-    author,
-    blogDescription,
-    blogTitle, blogUrl,
-    blogImage, blogPublishDate
-  },
-  template = addTemplateLoaders('./src/index.pug', blogUrl)
-) => createHtmlPlugin(
-  chunkName,
-  fileName,
-  title,
-  template, {
-    blogDescription,
-    blogTitle,
-    blogImage,
-    blogUrl,
-    blogPublishDate,
-    author
-  }
-)
-
 const convertChunkToPath = (chunk, path) => `./src${path ? `/${path}` : ''}/${chunk}.js`
 const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
   acc[chunk] = convertChunkToPath(chunk, path)
@@ -108,28 +55,7 @@ const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
 const PLUGINS = [] //new BundleAnalyzerPlugin({server: true})]
 
 if (!IS_TEST) {
-  PLUGINS.push(
-    createHtmlPlugin('home', 'index.html', ` Consulting`),
-    createHtmlPlugin('contact', 'contact.html', titleAdd('Contact')),
-    createHtmlPlugin('process', 'process.html', titleAdd('Process')),
-    createHtmlPlugin('quote', 'quote.html', titleAdd('Quote')),
-    createHtmlPlugin('blog', 'blog.html', titleAdd('Blog')),
-    createHtmlPlugin('terms-of-service', 'terms-of-service.html', titleAdd('Terms of Service')),
-    createHtmlPlugin('privacy', 'privacy-policy.html', titleAdd('Privacy Policy')),
-    createBlogHtmlPlugin(
-      'dangers-of-genservers',
-      'blog/elixir/dangers-of-genservers.html',
-      titleAdd('Blog - Dangers of GenServers'),
-      {
-        blogDescription: 'At Lure, we use the latest software to bring you the best user experience. In this article, Lure CTEO Mika Kalathil outlines some of the technical details of GenServers in Elixir, which we use to serve a large multitude of people with high speed. This is a deep dive into GenServers and discovering their limitations and strengths.',
-        blogTitle: 'Dangers of Genservers in Elixir',
-        blogImage: 'assets/blog-elixir-dangers-of-genservers.jpeg',
-        blogUrl: 'blog/elixir/dangers-of-genservers',
-        blogPublishDate: '2018-10-29T16:14:24.526Z',
-        author: 'Mika Kalathil'
-      }
-    )
-  )
+  PLUGINS.push(...createHtmlPages(STATIC_ENTRY_CHUNKS, BLOG_VIEW_CHUNKS))
 }
 
 if (IS_PROD) {
