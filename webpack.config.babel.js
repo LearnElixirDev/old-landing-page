@@ -18,7 +18,6 @@ import WebpackPwaManifest from 'webpack-pwa-manifest'
 import {GenerateSW} from 'workbox-webpack-plugin'
 import ExcludeAssetsPlugin from 'webpack-exclude-assets-plugin'
 import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin'
-import CopyWebpackPlugin from 'copy-webpack-plugin'
 import SitemapPlugin from 'sitemap-webpack-plugin'
 import RobotstxtPlugin from 'robotstxt-webpack-plugin'
 
@@ -52,7 +51,7 @@ const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
   return acc
 }, {})
 
-const PLUGINS = [] //new BundleAnalyzerPlugin({server: true})]
+const PLUGINS = [new BundleAnalyzerPlugin({server: true})]
 
 if (!IS_TEST) {
   PLUGINS.push(...createHtmlPages(STATIC_ENTRY_CHUNKS, BLOG_VIEW_CHUNKS))
@@ -140,27 +139,27 @@ if (IS_PROD) {
       }]
     }),
 
-    new S3Plugin({
-      s3Options: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        region: 'us-west-2'
-      },
+    // new S3Plugin({
+    //   s3Options: {
+    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    //     region: 'us-west-2'
+    //   },
 
-      s3UploadOptions: {
-        Bucket: 'lure.is',
-        CacheControl: cond([
-          [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
-          [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
-          [T, always('max-age=315360000, no-transform, public')]
-        ])
-      },
+    //   s3UploadOptions: {
+    //     Bucket: 'lure.is',
+    //     CacheControl: cond([
+    //       [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
+    //       [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
+    //       [T, always('max-age=315360000, no-transform, public')]
+    //     ])
+    //   },
 
-      cloudfrontInvalidateOptions: {
-        DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-        Items: ['/*']
-      }
-    }),
+    //   cloudfrontInvalidateOptions: {
+    //     DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+    //     Items: ['/*']
+    //   }
+    // }),
 
     new SriPlugin({hashFuncNames: ['sha256', 'sha384'], enabled: true}),
 
@@ -229,7 +228,7 @@ export default {
 
   module: {
     rules: [{
-      test: /\.(png|jpg|jpeg)$/,
+      test: /\.(png|jpg|jpeg|xml|ico)$/,
       use: [{
         loader: 'file-loader',
         options: {
@@ -327,11 +326,7 @@ export default {
   },
 
   plugins: [
-    ...PLUGINS,
-    new CopyWebpackPlugin([
-      {from: srcPath('assets'), to: distPath('assets')},
-      {from: srcPath('assets/favicon/favicon.ico'), to: DIST_PATH}
-    ])
+    ...PLUGINS
   ],
 
   resolve: {
@@ -378,10 +373,11 @@ export default {
           mangle: true,
 
           compress: {
-            passes: 3,
+            passes: 10,
             toplevel: true,
             warnings: false,
             pure_getters: true,
+            hoist_funs: true,
             pure_funcs: ['console.log', 'console.debug'],
             collapse_vars: false
           },

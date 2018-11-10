@@ -5,37 +5,37 @@ html(lang='en')
     title= htmlWebpackPlugin.options.title
     base(href='/')
 
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    link(rel='icon', type='image/png', sizes='32x32', href=require('assets/favicon/favicon-32x32.png'))
+    link(rel='icon', type='image/png', sizes='16x16', href=require('assets/favicon/favicon-16x16.png'))
+    link(rel='shortcut icon', href=require('assets/favicon/favicon.ico'))
+
     - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
+      - const favIcon = require('assets/favicon/favicon-32x32.png')
+
       script.
         if ('serviceWorker' in navigator)
           navigator.serviceWorker.register('sw.js')
 
-
-    meta(name='viewport' content='width=device-width, initial-scale=1')
-
-    - if (htmlWebpackPlugin.options.NODE_ENV === 'production')
       meta(property='fb:app_id' content='2355026794524819')
       meta(name='keywords' content='agency,consulting,web-development,development,engineering,web-design,design,ui/ux,functional programming,fp')
 
-      link(rel='apple-touch-icon', sizes='180x180', href='assets/favicon/apple-touch-icon.png')
-      link(rel='icon', type='image/png', sizes='32x32', href='assets/favicon/favicon-32x32.png')
-      link(rel='icon', type='image/png', sizes='16x16', href='assets/favicon/favicon-16x16.png')
-      link(rel='mask-icon', href='assets/favicon/safari-pinned-tab.svg', color='#5bbad5')
-      link(rel='shortcut icon', href='assets/favicon/favicon.ico')
+      link(rel='apple-touch-icon', sizes='180x180', href=require('assets/favicon/apple-touch-icon.png'))
+      link(rel='mask-icon', href=require('!!file-loader!assets/favicon/safari-pinned-tab.svg'), color='#5bbad5')
       meta(name='msapplication-TileColor', content='#2b5797')
-      meta(name='msapplication-config', content='assets/favicon/browserconfig.xml')
+      meta(name='msapplication-config', content=require('assets/favicon/browserconfig.xml'))
 
       - if (htmlWebpackPlugin.options.blogDescription)
         - const description = htmlWebpackPlugin.options.blogDescription
         - const blogUrl = htmlWebpackPlugin.options.blogUrl
-        - const blogImage = htmlWebpackPlugin.options.blogImage
+        - const blogImage = require(`assets/${htmlWebpackPlugin.options.blogImage}`)
         - const blogTitle = htmlWebpackPlugin.options.blogTitle
         - const blogPublishDate = htmlWebpackPlugin.options.blogPublishDate
         - const author = htmlWebpackPlugin.options.author
 
         meta(property='og:title' content=blogTitle)
         meta(property='og:site_name' content='Lure\'s Blog')
-        meta(property='og:image' content=`https://lure.is/${blogImage}`)
+        meta(property='og:image' content=blogImage)
         meta(property='og:description' content=description)
         meta(property='og:url' content=blogUrl)
         meta(property='og:type' content='article')
@@ -64,7 +64,7 @@ html(lang='en')
               "name": "Lure",
               "logo": {
                 "@type": "ImageObject",
-                "url": "https://lure.is/assets/favicon/favicon-32x32.png"
+                "url": `https://lure.is/#{favIcon}`
               }
             },
             "description": "#{description}"
@@ -75,7 +75,7 @@ html(lang='en')
 
         meta(property='og:title' content='Take your startup to the next level')
         meta(property='og:site_name' content='Lure Consulting')
-        meta(property='og:image' content='https://lure.is/assets/lure-logo.png')
+        meta(property='og:image' content=require('assets/lure-logo.png'))
         meta(property='og:description' content=description)
         meta(property='og:url' content='https://lure.is')
         meta(property='og:type' content='website')
@@ -90,7 +90,7 @@ html(lang='en')
             "name": "Lure Consulting",
             "logo": {
               "@type": "ImageObject",
-              "url": "https://lure.is/assets/favicon/favicon-32x32.png"
+              "url": "https://lure.is/#{favIcon}"
             },
             "location": {
               "@type": "City",
@@ -116,6 +116,10 @@ html(lang='en')
         gtag('js', new Date());
 
         gtag('config', 'UA-127515836-1', {optimize_id: 'GTM-P4QM24T'});
+
+      // Log Rocket
+      script(src='https://cdn.logrocket.io/LogRocket.min.js' crossorigin='anonymous').
+        window.LogRocket && window.LogRocket.init('nac0rh/lure-lander');
 
       <!--[if (lt IE 9)]><script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.8.7/min/tiny-slider.helper.ie8.js"></script><![endif]-->
 

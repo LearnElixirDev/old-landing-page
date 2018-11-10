@@ -3,7 +3,7 @@ import 'ric'
 
 smoothscroll.polyfill()
 
-if (typeof Object.assign != 'function') {
+if (typeof Object.assign !== 'function')
   // Must be writable: true, enumerable: false, configurable: true
   Object.defineProperty(Object, 'assign', {
     value: function assign(target, varArgs) { // .length of function is 2
@@ -31,8 +31,14 @@ if (typeof Object.assign != 'function') {
     writable: true,
     configurable: true
   })
-}
 
-if (process.env.NODE_ENV === 'production')
-  import('autotrack')
+if (typeof Object.entries !== 'function')
+  Object.entries = function(obj) {
+    var ownProps = Object.keys(obj),
+        i = ownProps.length,
+        resArray = new Array(i); // preallocate the Array
+    while (i--)
+      resArray[i] = [ownProps[i], obj[ownProps[i]]];
 
+    return resArray;
+  };

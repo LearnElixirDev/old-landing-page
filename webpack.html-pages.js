@@ -73,7 +73,7 @@ export const createHtmlPages = (STATIC_ENTRY_CHUNKS, BLOG_VIEW_CHUNKS) => {
       {
         blogDescription: 'At Lure, we use the latest software to bring you the best user experience. In this article, Lure CTEO Mika Kalathil outlines some of the technical details of GenServers in Elixir, which we use to serve a large multitude of people with high speed. This is a deep dive into GenServers and discovering their limitations and strengths.',
         blogTitle: 'Dangers of Genservers in Elixir',
-        blogImage: 'assets/blog-elixir-dangers-of-genservers.jpeg',
+        blogImage: 'blog-elixir-dangers-of-genservers.jpeg',
         blogUrl: 'blog/elixir/dangers-of-genservers',
         blogPublishDate: '2018-10-29T16:14:24.526Z',
         author: 'Mika Kalathil'
