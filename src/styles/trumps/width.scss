@@ -2,3 +2,15 @@
 .width-copy {
   max-width: 450px;
 }
+
+.w-page-copy {
+  max-width: 450px;
+
+  @include breakpoint($font-size-up-width) {
+    max-width: 550px;
+  }
+
+  @include breakpoint($second-font-size-up-width) {
+    max-width: 650px;
+  }
+}

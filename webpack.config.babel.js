@@ -51,7 +51,7 @@ const convertToEntryPaths = (chunks, path) => chunks.reduce((acc, chunk) => {
   return acc
 }, {})
 
-const PLUGINS = [new BundleAnalyzerPlugin({server: true})]
+const PLUGINS = [] // new BundleAnalyzerPlugin({server: true})]
 
 if (!IS_TEST) {
   PLUGINS.push(...createHtmlPages(STATIC_ENTRY_CHUNKS, BLOG_VIEW_CHUNKS))
@@ -139,27 +139,29 @@ if (IS_PROD) {
       }]
     }),
 
-    // new S3Plugin({
-    //   s3Options: {
-    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    //     region: 'us-west-2'
-    //   },
+    new S3Plugin({
+      directory: DIST_PATH,
 
-    //   s3UploadOptions: {
-    //     Bucket: 'lure.is',
-    //     CacheControl: cond([
-    //       [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
-    //       [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
-    //       [T, always('max-age=315360000, no-transform, public')]
-    //     ])
-    //   },
+      s3Options: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        region: 'us-west-2'
+      },
 
-    //   cloudfrontInvalidateOptions: {
-    //     DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-    //     Items: ['/*']
-    //   }
-    // }),
+      s3UploadOptions: {
+        Bucket: 'lure.is',
+        CacheControl: cond([
+          [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
+          [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
+          [T, always('max-age=315360000, no-transform, public')]
+        ])
+      },
+
+      cloudfrontInvalidateOptions: {
+        DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+        Items: ['/*']
+      }
+    }),
 
     new SriPlugin({hashFuncNames: ['sha256', 'sha384'], enabled: true}),
 
@@ -167,7 +169,7 @@ if (IS_PROD) {
       swDest: distPath('sw.js'),
       skipWaiting: true,
       clientsClaim: true,
-      navigateFallback: '/',
+      navigateFallbackWhitelist: [/\//, /\/blog\/.+/, /\/(blog|process|contact|quote|terms-of-service|privacy-policy)/],
       offlineGoogleAnalytics: true
     })
   )
@@ -358,7 +360,7 @@ export default {
           name: 'svgs',
           test: /\.svg$/,
           chunks: 'all',
-          minChunks: 2
+          priority: 99
         }
       }
     },
