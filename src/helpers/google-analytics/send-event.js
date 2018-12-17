@@ -8,10 +8,15 @@ export const sendEvent = (category, event, label = '', value = null) => {
     Value: ${value}
     `)
 
-    if (ga)
-      ga('send', 'event', category, event, label, value)
-    else
+    if (ga) {
+       const tracker = ga.getAll()[0]
+
+      if (tracker)
+        tracker.send('event', category, event, label, value)
+
+    } else {
       console.error(`GA not found - Couldn't emit ${category} - ${event} - ${label}`)
+    }
   } else {
     console.debug(`
     If was in PROD would send google analytics event

@@ -14,6 +14,6 @@ export const setupGoogleAnalytics = () => {
   return Object.entries(AUTOTRACK_CONFIG)
     .map(([event, config]) => {
       if (ga)
-        ga('require', 'event', config)
+        ga('require', event, config)
     })
 }

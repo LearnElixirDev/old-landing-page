@@ -152,7 +152,7 @@ if (IS_PROD) {
         Bucket: 'lure.is',
         CacheControl: cond([
           [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
-          [test(/index.html/), always('max-age=315360000, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
+          [test(/^.*\.html$/), always('max-age=0, must-revalidate, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
           [T, always('max-age=315360000, no-transform, public')]
         ])
       },
@@ -169,6 +169,7 @@ if (IS_PROD) {
       swDest: distPath('sw.js'),
       skipWaiting: true,
       clientsClaim: true,
+      navigateFallback: '/index.html',
       navigateFallbackWhitelist: [/\//, /\/blog\/.+/, /\/(blog|process|contact|quote|terms-of-service|privacy-policy)/],
       offlineGoogleAnalytics: true
     })
@@ -337,7 +338,6 @@ export default {
   },
 
   optimization: !IS_PROD ? {} : {
-    runtimeChunk: 'single',
     moduleIds: 'hashed',
     splitChunks: {
       cacheGroups: {

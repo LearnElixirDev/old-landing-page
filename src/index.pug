@@ -14,8 +14,27 @@ html(lang='en')
       - const favIcon = require('assets/favicon/favicon-32x32.png')
 
       script.
-        if ('serviceWorker' in navigator)
-          navigator.serviceWorker.register('sw.js')
+        (function() {
+          const LOCAL_STORAGE_KEY = 'LURESWUNREGISTER'
+
+          if ('serviceWorker' in navigator) {
+            try {
+              if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                  registrations.forEach(function(registration) {
+                    registration.unregister()
+                  })
+
+                  localStorage.setItem(LOCAL_STORAGE_KEY, true)
+                })
+              }
+            } catch (e) {
+              console.error(e)
+            }
+
+            navigator.serviceWorker.register('sw.js')
+          }
+        })();
 
       meta(property='fb:app_id' content='2355026794524819')
       meta(name='keywords' content='agency,consulting,web-development,development,engineering,web-design,design,ui/ux,functional programming,fp')
