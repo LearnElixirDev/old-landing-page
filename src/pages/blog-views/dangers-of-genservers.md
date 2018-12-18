@@ -16,7 +16,7 @@ multiple instances/processes of that GenServer running.
 Elixir's concurrency and parallelism is achieved through processes.
 
 <div style='display: flex; justify-content: center; align-items: center; margin: 20px 0;'>
-<img src='/assets/gen-server-type-diff.svg'>
+<img src='../../assets/blog-images/gen-server-type-diff.svg'>
 </div>
 
 ### What are the costs of GenServers?
@@ -102,7 +102,7 @@ Say we've got a job processing system, and it batches up groups of 100 emails an
 we've got an endpoint that sends mail instantly, with the response of the mail passed along to the return of the API.
 
 <div style='display: flex; justify-content: center; align-items: center; margin: 20px 0;'>
-<img src='/assets/gen-server-blocking.svg'>
+<img src='../../assets/blog-images/gen-server-blocking.svg'>
 </div>
 
 We're now waiting for `send_mail_async` #1 - 100 to run before that endpoint can return the result of sending its one message. In the worst case scenario, 100 messages clog the queue for too long and our API call to send a message times out.
@@ -125,7 +125,7 @@ the PID and then call the PID directly which can be your GenServer.
 Using registries changes the flow to something like this:
 
 <div style='display: flex; justify-content: center; align-items: center; margin: 20px 0;'>
-<img src='/assets/gen-server-registry.svg'>
+<img src='../../assets/blog-images/gen-server-registry.svg'>
 </div>
 
 Registries provide a great solution to possible bottlenecks with GenServers that come from

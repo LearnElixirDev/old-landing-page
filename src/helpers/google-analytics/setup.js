@@ -1,19 +1,36 @@
 const AUTOTRACK_CONFIG = {
-  cleanUrlTracker: null,
-  impressionTracker: null,
-  maxScrollTracker: null,
-  mediaQueryTracker: null,
-  outboundFormTracker: null,
-  outboundLinkTracker: null,
-  pageVisibilityTracker: null,
+  EventTracker: null,
+  CleanUrlTracker: null,
+  ImpressionTracker: null,
+  MaxScrollTracker: null,
+  MediaQueryTracker: null,
+  OutboundFormTracker: null,
+  OutboundLinkTracker: null,
+  PageVisibilityTracker: null,
   // socialWidgetTracker: null,
-  urlChangeTracker: null
+  UrlChangeTracker: null
+}
+
+const getGaId = () => {
+  if (window.ga && window.ga.getAll) {
+    const [ourGa] = window.ga.getAll()
+
+    return ourGa
+  } else {
+    return null
+  }
 }
 
 export const setupGoogleAnalytics = () => {
-  return Object.entries(AUTOTRACK_CONFIG)
-    .map(([event, config]) => {
-      if (ga)
-        ga('require', event, config)
-    })
+  const gaId = getGaId()
+  if (gaId)
+    Object.entries(AUTOTRACK_CONFIG)
+      .map(([item, config]) => {
+        const plugin = window.gaplugins[item]
+
+        if (item)
+          new plugin (gaId, config)
+      })
+  else
+    setTimeout(setupGoogleAnalytics, 100)
 }

@@ -66,8 +66,8 @@ if (IS_PROD) {
     new RobotstxtPlugin({host: 'https://lure.is', sitemap: 'https://lure.is/sitemap.xml'}),
 
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
-      chunkFilename: '[name].[contenthash].css'
+      filename: '[name].[hash].css',
+      chunkFilename: '[name].[hash].css'
     }),
 
     // new Critters({}),
@@ -153,7 +153,7 @@ if (IS_PROD) {
         CacheControl: cond([
           [test(/^(precache-manifest|sw).*\.js$/), always('no-cache')],
           [test(/^.*\.html$/), always('max-age=0, must-revalidate, stale-while-revalidate=86400, stale-if-error=259200, no-transform, public')],
-          [T, always('max-age=315360000, no-transform, public')]
+          [T, always('max-age=315360000, must-revalidate, stale-if-error=259200, stale-while-revalidate=86400, no-transform, public')]
         ])
       },
 
@@ -224,8 +224,8 @@ export default {
 
   output: {
     path: DIST_PATH,
-    chunkFilename: IS_PROD ? '[name].[contenthash].js' : '[name].js',
-    filename: IS_PROD ? '[name].[contenthash].js' : '[name].js',
+    chunkFilename: IS_PROD ? '[name].[hash].js' : '[name].js',
+    filename: IS_PROD ? '[name].[hash].js' : '[name].js',
     crossOriginLoading: IS_PROD ? 'anonymous' : false
   },
 
@@ -259,6 +259,7 @@ export default {
       }]
     }, {
       test: /\.svg$/,
+      exclude: srcPath('assets/blog-images'),
       use: [
         'raw-loader'
       ]
@@ -272,11 +273,21 @@ export default {
         {loader: 'sass-loader', options: {includePaths: SASS_INCLUDES}}
       ]
     }, {
+      test: /\.svg$/,
+      include: srcPath('assets/blog-images'),
+      use: [{
+        loader: 'file-loader',
+        options: {
+          name: IS_PROD ? '[name].[hash].[ext]' : '[name].[ext]'
+        }
+      }]
+    }, {
       test: /\.md$/,
       include: SRC_PATH,
       use: ['html-loader', {
         loader: 'markdown-loader',
         options: {
+          baseUrl: '',
           smartypants: true,
           highlight(code, lang) {
             const language = Prism.languages[lang] || Prism.languages.autoit
