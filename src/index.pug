@@ -15,7 +15,7 @@ html(lang='en')
 
       script.
         (function() {
-          const LOCAL_STORAGE_KEY = 'LURESWUNREGISTER'
+          const LOCAL_STORAGE_KEY = 'LURESWUNREGISTER-V0'
 
           if ('serviceWorker' in navigator) {
             try {
@@ -128,6 +128,15 @@ html(lang='en')
       //-   })(window,document.documentElement,'async-hide','dataLayer',4000,
       //-   {'GTM-P4QM24T':true});
 
+
+      // Google Tag Manager
+      script.
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-M649SH8');
+
       script(async src='https://www.googletagmanager.com/gtag/js?id=UA-127515836-1')
       script.
         window.dataLayer = window.dataLayer || [];
@@ -136,6 +145,7 @@ html(lang='en')
 
         gtag('config', 'UA-127515836-1', {optimize_id: 'GTM-P4QM24T'});
 
+
       // Log Rocket
       script(src='https://cdn.logrocket.io/LogRocket.min.js' crossorigin='anonymous').
         window.LogRocket && window.LogRocket.init('nac0rh/lure-lander');
@@ -143,5 +153,7 @@ html(lang='en')
       <!--[if (lt IE 9)]><script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.8.7/min/tiny-slider.helper.ie8.js"></script><![endif]-->
 
   body
+    noscript
+      iframe(src="https://www.googletagmanager.com/ns.html?id=GTM-M649SH8", height="0", width="0", style="display:none;visibility:hidden")
 
 

@@ -171,6 +171,7 @@ if (IS_PROD) {
       clientsClaim: true,
       navigateFallback: '/index.html',
       navigateFallbackWhitelist: [/\//, /\/blog\/.+/, /\/(blog|process|contact|quote|terms-of-service|privacy-policy)/],
+      navigateFallbackBlacklist: [/sw.js/],
       offlineGoogleAnalytics: true
     })
   )
